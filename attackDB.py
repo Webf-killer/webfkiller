@@ -3,8 +3,7 @@ import mysql.connector
 attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
 mycursor = attackDB.cursor()
 
-tables_files = [('attack_types', 'attack', 'attack_types.txt'), ('urls', 'url', 'urls_data.txt'), 
-                ('xss_data', 'data', 'xss_data.txt'), ('sqli_data', 'data', 'sqli_data.txt'), 
+tables_files = [('urls', 'url', 'urls_data.txt'), ('xss_data', 'data', 'xss_data.txt'), ('sqli_data', 'data', 'sqli_data.txt'), 
                 ('or_data', 'data', 'o.r_data.txt'), ('payloads_xss', 'payload', 'payloads_xss.txt'), 
                 ('payloads_sqli', 'payload', 'payloads_sqli.txt'), ('payloads_or', 'payload', 'payloads_o.r.txt'),
                 ('sql_errors','error', 'sql_errors.txt'),('xss_errors','error', 'xss_errors.txt'),
