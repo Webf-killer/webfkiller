@@ -6,7 +6,8 @@ mycursor = attackDB.cursor()
 tables_files = [('attack_types', 'attack', 'attack_types.txt'), ('urls', 'url', 'urls_data.txt'), 
                 ('xss_data', 'data', 'xss_data.txt'), ('sqli_data', 'data', 'sqli_data.txt'), 
                 ('or_data', 'data', 'o.r_data.txt'), ('payloads_xss', 'payload', 'payloads_xss.txt'), 
-                ('payloads_sqli', 'payload', 'payloads_sqli.txt'), ('payloads_or', 'payload', 'payloads_o.r.txt')]
+                ('payloads_sqli', 'payload', 'payloads_sqli.txt'), ('payloads_or', 'payload', 'payloads_o.r.txt'),
+                ('sql_errors','error', 'sql_errors.txt'),('xss_errors','error', 'xss_errors.txt'),('or_errors','error', 'o.r_errors.txt')]
 
 # 각 테이블에 대해
 for table, column, file in tables_files:
@@ -22,8 +23,9 @@ for table, column, file in tables_files:
 
     attackDB.commit()  # 각 테이블에 대해 데이터 삽입이 끝날 때마다 commit 호출 
 
-
-
+    #record_success 테이블을 만들어 공격분석후 저장하도록 해야함
+    #attack 모듈로 부터 받은 success_xss, success_sqli, success_o.r 
+   
 
 
 

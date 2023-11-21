@@ -1,0 +1,74 @@
+DROP DATABASE attackDB;
+CREATE DATABASE IF NOT EXISTS attackDB;
+USE attackDB;
+
+CREATE TABLE IF NOT EXISTS attack_types (
+    id INT AUTO_INCREMENT,
+    attack TEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS urls (
+    id INT AUTO_INCREMENT,
+	url LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS xss_data (
+    id INT AUTO_INCREMENT,
+    data LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS sqli_data (
+    id INT AUTO_INCREMENT,
+    data LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS or_data (
+    id INT AUTO_INCREMENT,
+    data LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS payloads_xss (
+    id INT AUTO_INCREMENT,
+    payload LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS payloads_sqli (
+    id INT AUTO_INCREMENT,
+    payload LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+
+CREATE TABLE IF NOT EXISTS payloads_or (
+    id INT AUTO_INCREMENT,
+    payload LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS sql_errors (
+    id INT AUTO_INCREMENT,
+    error LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS xss_errors (
+    id INT AUTO_INCREMENT,
+    error LONGTEXT,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS or_errors (
+    id INT AUTO_INCREMENT,
+    error LONGTEXT,
+    PRIMARY KEY (id)
+);
