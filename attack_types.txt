@@ -1,0 +1,3 @@
+xss
+sqli
+o.r
