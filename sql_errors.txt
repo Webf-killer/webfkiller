@@ -1,0 +1,18 @@
+"SELECT * FROM"  
+"INSERT INTO"
+"UPDATE "
+"DELETE FROM"
+"DROP TABLE"
+"WHERE "
+"ORDER BY "
+"GROUP BY "
+"UNION ALL SELECT"
+"OR '1'='1'"
+'you have an error in your SQL syntax'
+'Server Error in'
+'Fatal error'
+'Microsoft JET Database Engine error'
+'ORA-00933'
+'Microsoft OLE DB Provider for ODBC Drivers'
+'PSQLException'
+'Unclosed quotation mark after the character string'
