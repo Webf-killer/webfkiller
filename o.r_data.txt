@@ -1,9 +1,3 @@
-next
-url
-target
-rurl
-dest
-destination
 redirect
 go
 return

