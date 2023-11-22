@@ -7,49 +7,54 @@ class AttackModule:
     # 초기화 함수
     def __init__(self):
         try:
-            # MySQL에 연결 시도
+            # MySQL에 연결
             self.attackDB = mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
             self.mycursor = self.attackDB.cursor()
         except mysql.connector.Error as err:
-            # 연결 실패-> 오류 
+            # 연결 실패-> 오류 메시지 출력
             print(f"Error: {err}")
             return
-
 
         # 데이터를 초기화합니다.
         self.init_data()
 
     # 데이터 초기화 함수
-    
-     # 공격 유형에 대한 데이터를 가져오는 함수
-    def get_data_for_attack_type(self, table):
-        # 테이블 이름에 따라 선택할 열 이름이 달라집니다.
-        column = 'payload' if 'payloads' in table else 'url' if table == 'urls' else 'data'
+    def get_data(self, table, column):
         try:
             # 선택한 열의 데이터를 가져옵니다.
             self.mycursor.execute(f"SELECT {column} FROM {table}")
             results = self.mycursor.fetchall()
+            # 결과를 리스트로 반환합니다.
             return [row[0] for row in results]
         except mysql.connector.Error as err:
             # 실패하면 오류 메시지를 출력합니다.
             print(f"Error: {err}")
             return []
-        
+    
     def init_data(self):
         # 각 공격 유형에 대한 데이터를 가져옵니다.
-        self.sql_errors = self.get_data_for_attack_type('sql_errors')
-        self.xss_errors = self.get_data_for_attack_type('xss_errors')
-        self.or_errors = self.get_data_for_attack_type('or_errors')
+        self.sql_errors = self.get_data('sql_errors', 'error')
+        self.xss_errors = self.get_data('xss_errors', 'error')
+        self.or_errors = self.get_data('or_errors', 'error')
 
         # 각 공격 유형에 대한 페이로드
-        tables_attack_types = [('payloads_sqli', 'sqli'), ('payloads_xss', 'xss'), ('payloads_or', 'or')]
-        self.payloads = {attack_type: self.get_data_for_attack_type(table) for table, attack_type in tables_attack_types}
+        self.payloads = {
+            "sqli": self.get_data('payloads_sqli', 'payload'),
+            "xss": self.get_data('payloads_xss', 'payload'),
+            "or": self.get_data('payloads_or', 'payload'),
+        }
 
         # 공격할 URL들
-        self.urls = self.get_data_for_attack_type('urls')
-        # 공격에 사용할 데이터
-        self.data = {vuln: self.get_data_for_attack_type(f'{vuln}_data') for vuln in ['or', 'xss', 'sqli']}
+        self.urls = self.get_data('urls', 'url')
 
+        # 공격에 사용할 데이터
+        self.data = {
+            "or": self.get_data('or_data', 'data'),
+            "xss": self.get_data('xss_data', 'data'),
+            "sqli": self.get_data('sqli_data', 'data'),
+        }
+
+    # 나머지 코드는 이전과 동일합니다.
     # 공격 실행 함수
     def execute_attack(self):
         # 사용할 HTTP 메소드를 정의합니다.
@@ -125,5 +130,6 @@ class AttackModule:
 # 공격 모듈 객체를 생성하고 공격을 실행합니다.
 attack_module = AttackModule()
 attack_module.execute_attack()
+
 
 

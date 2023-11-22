@@ -1,1 +1,1 @@
-sqli_errors
+par
