@@ -1,8 +1,9 @@
 import mysql.connector
-
+# MySQL에 연결
 attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
 mycursor = attackDB.cursor()
 
+# 각 테이블 이름, 열 이름, 데이터 파일 이름을 튜플로 묶어 리스트 생성
 tables_files = [('urls', 'url', 'urls_data.txt'), ('xss_data', 'data', 'xss_data.txt'), ('sqli_data', 'data', 'sqli_data.txt'), 
                 ('or_data', 'data', 'o.r_data.txt'), ('payloads_xss', 'payload', 'payloads_xss.txt'), 
                 ('payloads_sqli', 'payload', 'payloads_sqli.txt'), ('payloads_or', 'payload', 'payloads_o.r.txt'),
