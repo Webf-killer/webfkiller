@@ -30,6 +30,7 @@ def home():
         </body>
     </html>
     """
+
 # XSS/SQLi 공격 테스트 페이지 라우트
 @app.route('/XSS/SQLI', methods=['GET', 'POST'])
 def xss_sqli():
