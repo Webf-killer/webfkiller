@@ -3,11 +3,11 @@
 #메모장 안에 해당 코드 복붙 
 #파일 위치 = C:\attackweb
 from flask import Flask, request, redirect, render_template_string
+from urllib.parse import unquote
 import sqlite3
 import os
 
 app = Flask(__name__)
-
 
 memos = []
 
@@ -16,35 +16,20 @@ def home():
     return """
     <html>
         <head>
-            <title>Mini News</title>
+            <title>AttackServer</title>
         </head>
         <body>
-            <h1>Mini News</h1>
+            <h1>AttackServer</h1>
             <ul>
-                <li><a href="/news/1">News 1</a></li>
-                <li><a href="/xss">XSS</a></li>
+                <li><a href="/XSS/SQLI">XSS/SQLI</a></li>
                 <li><a href="/open_redirect">Open Redirect</a></li>
             </ul>
         </body>
     </html>
     """
-@app.route('/news/<int:news_id>')
-def news(news_id):
-    conn = sqlite3.connect(':memory:')
-    conn.execute("CREATE TABLE news (id INT, title TEXT, content TEXT)")
-    conn.execute("INSERT INTO news VALUES (1, 'News 1', 'News 1 content')")
-    conn.execute("INSERT INTO news VALUES (2, 'News 2', 'News 2 content')")
-    conn.execute("INSERT INTO news VALUES (3, 'News 3', 'News 3 content')")
-    query = f"SELECT * FROM news WHERE id = '{news_id}'"  # SQL Injection vulnerability
-    result = conn.execute(query).fetchall()  
-    if result:
-        title, content = result[0][1], result[0][2]
-    else:
-        title, content = 'Not Found', 'Not Found'
-    return f'<h1>{title}</h1><p>{content}</p>'
 
-@app.route('/xss', methods=['GET', 'POST'])
-def xss():
+@app.route('/XSS/SQLI', methods=['GET', 'POST'])
+def xss_sqli():
     if request.method == 'POST':
         memo = request.form.get('memo', '')
         memos.append(memo)
@@ -63,7 +48,7 @@ def xss():
             <li><a href="/memo?id={{ loop.index }}">{{ memo }}</a></li>
             {% endfor %}
         </ul>
-        <form action="/xss" method="POST">
+        <form action="/XSS/SQLI" method="POST">
             <input type="text" name="memo">
             <input type="submit" value="메모 추가">
         </form>
@@ -86,10 +71,23 @@ def search():
         {{ query|safe }}
     ''', query=query)
 
+from urllib.parse import unquote
+
+from flask import redirect, request
+from urllib.parse import unquote_plus
 
 @app.route('/open_redirect')
 def open_redirect():
-    next = request.args.get('next', 'https://www.google.com')  # Open redirection vulnerability
-    return redirect(next, code=302)
+    params = ['redirect', 'go', 'return']
+    for param in params:
+        redirect_url = request.args.get(param)
+        if redirect_url:
+            redirect_url = unquote_plus(redirect_url)
+            return redirect(redirect_url, code=302)
+
+    return "No redirect URL provided", 400
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80)
+
