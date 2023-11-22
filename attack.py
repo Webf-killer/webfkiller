@@ -29,7 +29,8 @@ class AttackModule:
         self.payloads = {attack_type: self.get_data_for_attack_type(table) for table, attack_type in tables_attack_types}
 
         self.urls = self.get_data_for_attack_type('urls')
-        self.data = {vuln: self.get_data_for_attack_type(f'{vuln}_data') if vuln != 'or' else self.get_data_for_attack_type('or_data') for vuln in ['or']}
+        self.data = {vuln: self.get_data_for_attack_type(f'{vuln}_data') for vuln in ['or', 'xss', 'sqli']}
+         
 
         methods = ['GET', 'POST', 'PUT']
         for method in methods:

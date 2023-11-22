@@ -3,3 +3,4 @@
 <iframe onLoad iframe onLoad="javascript:javascript:alert(1)"></iframe onLoad>
 <body onFocus body onFocus="javascript:javascript:alert(1)"></body onFocus>
 <script\x20type="text/javascript">javascript:alert(1);</script>
+<script>alert(1)</script>
