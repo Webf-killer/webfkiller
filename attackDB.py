@@ -6,9 +6,7 @@ mycursor = attackDB.cursor()
 tables_files = [('urls', 'url', 'urls_data.txt'), ('xss_data', 'data', 'xss_data.txt'), ('sqli_data', 'data', 'sqli_data.txt'), 
                 ('or_data', 'data', 'o.r_data.txt'), ('payloads_xss', 'payload', 'payloads_xss.txt'), 
                 ('payloads_sqli', 'payload', 'payloads_sqli.txt'), ('payloads_or', 'payload', 'payloads_o.r.txt'),
-                ('sql_errors','error', 'sql_errors.txt'),('xss_errors','error', 'xss_errors.txt'),
-                ('or_errors','error', 'o.r_errors.txt'),('success_xss','success','success_xss.txt'),
-                ('success_sqli','success','success_sqli.txt'),('success_o.r','success','success_sqli.txt')]
+                ('sql_errors','error', 'sql_errors.txt'),('xss_errors','error', 'xss_errors.txt'),('or_errors','error', 'o.r_errors.txt')]
 
 # 각 테이블에 대해
 for table, column, file in tables_files:
