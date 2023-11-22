@@ -3,6 +3,11 @@ import mysql.connector
 from urllib.parse import urlencode
 
 class AttackModule:
+    def get_data_for_attack_type(self, table):
+        self.mycursor.execute(f"SELECT data FROM {table}")
+        results = self.mycursor.fetchall()
+        return [row[0] for row in results]
+    
     def __init__(self):
         self.attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
         self.mycursor = self.attackDB.cursor()
@@ -38,49 +43,20 @@ class AttackModule:
                     for data in self.data[vuln]:
                         for payload in self.payloads[vuln]:
                             self.send_request(method, url, data, payload, vuln)
-
-   
             
     def send_request(self, method, url, data, payload, vuln):
         try:
             if method in ['GET']:
-                if vuln == 'sqli':
-                    full_url_sqli = f"{url}?{urlencode(data)}={payload}"
-                    print(f"Sending {method} request to: {full_url_sqli}")
-                    response_sqli = requests.request(method, full_url_sqli)
-                    self.analyze_response(url, data, payload, response_sqli, vuln)
-                elif vuln == 'xss':
-                    full_url_xss = f"{url}?{urlencode(data)}={urlencode(payload)}"
-                    print(f"Sending {method} request to: {full_url_xss}")
-                    response_xss = requests.request(method, full_url_xss)
-                    self.analyze_response(url, data, payload, response_xss, vuln)
-                elif vuln == 'openredir':
-                    full_url_or = f"{url}?{urlencode(data)}={urlencode(payload)}"
-                    print(f"Sending {method} request to: {full_url_or}")
-                    response_or = requests.request(method, full_url_or)
-                    self.analyze_response(url, data, payload, response_or, vuln)
-
-
+                full_url = f"{url}?{urlencode({data: payload})}"
+                print(f"Sending {method} request to: {full_url}")
+                response = requests.request(method, full_url)
+                self.analyze_response(url, data, payload, response, vuln)
             elif method in ['POST', 'PUT']:
-                if vuln == 'sqli':
-                    data_sqli = {data: payload}
-                    print(f"Sending {method} request to: {url}")
-                    headers = {'Content-Type': 'application/json'}
-                    response_sqli = requests.request(method, url, json=data_sqli, headers=headers)
-                    self.analyze_response(url, data, payload, response_sqli, vuln)
-                elif vuln == 'xss':
-                    data_xss = {data: payload}
-                    print(f"Sending {method} request to: {url}")
-                    headers = {'Content-Type': 'application/json'}
-                    response_xss = requests.request(method, url, json=data_xss, headers=headers)
-                    self.analyze_response(url, data, payload, response_xss, vuln)
-                elif vuln == 'openredir':
-                    data_or = {data: payload}
-                    print(f"Sending {method} request to: {url}")
-                    headers = {'Content-Type': 'application/json'}
-                    response_or = requests.request(method, url, json=data_or, headers=headers)
-                    self.analyze_response(url, data, payload, response_or, vuln)
-               
+                data = {data: payload}
+                print(f"Sending {method} request to: {url}")
+                headers = {'Content-Type': 'application/json'}
+                response = requests.request(method, url, json=data, headers=headers)
+                self.analyze_response(url, data, payload, response, vuln)
             else:
                 print(f"Invalid method: {method}")
                 return
@@ -94,8 +70,9 @@ class AttackModule:
             #응답코드-> 민지
             if response.status_code == 200 and payload in response.text:
                 print("Attack might have been successful")
-                self.mycursor.execute(f"INSERT INTO success_responses_{vuln} VALUES (%s,%s,%s,%s,%s,%s)",
-                            (url, data, payload, response.status_code, vuln))
+                self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_sqli (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                self.mycursor.execute(f"INSERT INTO success_sqli (success) VALUES (%s)",
+                            (f"URL: {url}, Data: {data}, Payload: {payload}, Status Code: {response.status_code}, Vuln: {vuln}",))
                 self.attackDB.commit()
 
             # 패턴탐지-> 민지
@@ -107,11 +84,13 @@ class AttackModule:
                 for error in self.sqli_errors:
                     if error in response.text:
                         print(f"Potential SQLi vulnerability detected: {error}")
-                        self.mycursor.execute(f"INSERT INTO success_sqli VALUES (%s,%s,%s,%s,%s,%s)",
-                                    (url, data, payload, response.text, vuln, error))
+                        self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_sqli (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                        self.mycursor.execute(f"INSERT INTO success_sqli (success) VALUES (%s)",
+                                    (f"URL: {url}, Data: {data}, Payload: {payload}, Response: {response.text}, Vuln: {vuln}, Error: {error}",))
                         self.attackDB.commit()
                 else:
-                    print("Attack failed")        
+                    print("Attack failed")
+     
 
 
 
@@ -119,11 +98,12 @@ class AttackModule:
             #응답코드-> 민지
             if response.status_code == 200 and payload in response.text:
                 print("Attack might have been successful")
-                self.mycursor.execute(f"INSERT INTO success_responses_{vuln} VALUES (%s,%s,%s,%s,%s,%s)",
-                            (url, data, payload, response.status_code, vuln))
+                self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_xss (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                self.mycursor.execute(f"INSERT INTO success_xss (success) VALUES (%s)",
+                            (f"URL: {url}, Data: {data}, Payload: {payload}, Status Code: {response.status_code}, Vuln: {vuln}",))
                 self.attackDB.commit()
-            
-            
+                    
+                    
             # 패턴탐지-> 민지
             # xss_errors.txt가져오기
             else:
@@ -133,11 +113,13 @@ class AttackModule:
                 for error in self.xss_errors:
                     if error in response.text:
                         print(f"Potential XSS vulnerability detected: {error}")
-                        self.mycursor.execute(f"INSERT INTO success_xss VALUES (%s,%s,%s,%s,%s,%s)",
-                                    (url, data, payload, response.text, vuln, error))
+                        self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_xss (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                        self.mycursor.execute(f"INSERT INTO success_xss (success) VALUES (%s)",
+                                    (f"URL: {url}, Data: {data}, Payload: {payload}, Response: {response.text}, Vuln: {vuln}, Error: {error}",))
                         self.attackDB.commit()
                 else:
-                    print("Attack failed") 
+                    print("Attack failed")
+ 
 
 
 
@@ -146,18 +128,19 @@ class AttackModule:
             #응답코드-> 민지
             if response.status_code in [301, 302] and response.headers['Location'] == url:
                 print("Attack might have been successful")
-                self.mycursor.execute(f"INSERT INTO success_or VALUES (%s,%s,%s,%s,%s,%s)",
-                            (url, data, payload, response.status_code, vuln))
+                self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_or (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                self.mycursor.execute(f"INSERT INTO success_or (success) VALUES (%s)",
+                            (f"URL: {url}, Data: {data}, Payload: {payload}, Status Code: {response.status_code}, Vuln: {vuln}",))
                 self.attackDB.commit()
 
             #최종 URL-> 경서 
             elif response.headers['Location'] == response.text:
                 print("Attack might have been successful")
-                self.mycursor.execute(f"INSERT INTO success_or VALUES (%s,%s,%s,%s,%s,%s)",
-                            (url, data, payload, response.status_code, vuln))
+                self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_or (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                self.mycursor.execute(f"INSERT INTO success_or (success) VALUES (%s)",
+                            (f"URL: {url}, Data: {data}, Payload: {payload}, Status Code: {response.status_code}, Vuln: {vuln}",))
                 self.attackDB.commit()
 
-            
             # 패턴탐지-> 민지
             # o.r_errors.txt가져오기
             else:
@@ -167,11 +150,13 @@ class AttackModule:
                 for error in self.or_errors:
                     if error in response.text:
                         print(f"Potential OpenRedir vulnerability detected: {error}")
-                        self.mycursor.execute(f"INSERT INTO success_or VALUES (%s,%s,%s,%s,%s,%s)",
-                                    (url, data, payload, response.text, vuln, error))
+                        self.mycursor.execute("CREATE TABLE IF NOT EXISTS success_or (id INT AUTO_INCREMENT, success LONGTEXT, PRIMARY KEY (id))")
+                        self.mycursor.execute(f"INSERT INTO success_or (success) VALUES (%s)",
+                                    (f"URL: {url}, Data: {data}, Payload: {payload}, Response: {response.text}, Vuln: {vuln}, Error: {error}",))
                         self.attackDB.commit()
-                else:
-                    print("Attack failed")
+                    else:
+                        print("Attack failed")
+
 
         self.attackDB.commit()
 
