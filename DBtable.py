@@ -3,10 +3,12 @@ import mysql.connector
 attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
 mycursor = attackDB.cursor()
 
-tables = ['urls', 'xss_data', 'sqli_data', 'or_data', 
-          'payloads_xss', 'payloads_sqli', 'payloads_or',
-          'sql_errors','xss_errors','or_errors',
-          'success_sqli','success_xss','success_or']
+tables = ['urls', 'Reflectedxss_data', 'Storedxss_data', 'Domxss_data', 
+          'sqli_data', 'or_data', 'payloads_Reflectedxss', 
+          'payloads_Storedxss', 'payloads_Domxss', 'payloads_sqli', 'payloads_or',
+          'success_Reflectedxss', 'success_Storedxss', 'success_Domxss',
+          'success_sqli','success_or']
+
 
 for table in tables:
     print(f"Data in {table}:")
