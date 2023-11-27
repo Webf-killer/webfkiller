@@ -131,7 +131,6 @@ class AttackModule:
 attack_module = AttackModule()
 attack_module.execute_attack()
 
-<
 
 
 

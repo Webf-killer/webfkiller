@@ -1,0 +1,1 @@
+<img id="xss" src=x onerror=alert(1)>
