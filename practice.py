@@ -6,81 +6,78 @@ import mysql.connector
 
 
 class Attack:
-    def __init__(self):
-        try:
-            # MySQL에 연결
-            self.attackDB = mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
-            self.mycursor = self.attackDB.cursor()
-        except mysql.connector.Error as err:
-            # 연결 실패-> 오류 메시지 출력
-            print(f"Error: {err}")
-            return
-        
-        # 데이터를 초기화합니다.
-        self.init_data()
+    ATTACK_TYPE_SQLI = 'sqli'
+    ATTACK_TYPE_REFLECTED_XSS = 'Reflected_xss'
+    ATTACK_TYPE_STORED_XSS = 'Stored_xss'
+    ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
+    ATTACK_TYPE_OR = 'or'
 
-    # 데이터 초기화 함수
+    METHOD_GET = 'GET'
+    METHOD_POST = 'POST'
+
+    def __init__(self):
+        self.attackDB = None
+        self.mycursor = None
+        self.payloads = {}
+        self.urls = []
+        self.data = {}
+
+    def connect_db(self):
+        self.attackDB = mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
+        self.mycursor = self.attackDB.cursor()
+
+    def disconnect_db(self):
+        if self.attackDB:
+            self.attackDB.close()
+        self.attackDB = None
+        self.mycursor = None
+
     def get_data(self, table, column):
+        self.connect_db()
         try:
-            # 선택한 열의 데이터를 가져옵니다.
             self.mycursor.execute(f"SELECT {column} FROM {table}")
             results = self.mycursor.fetchall()
-            # 결과를 리스트로 반환합니다.
             return [row[0] for row in results]
         except mysql.connector.Error as err:
-            # 실패하면 오류 메시지를 출력합니다.
             print(f"Error: {err}")
             return []
+        finally:
+            self.disconnect_db()
         
-    #get_data 함수를 통해 
-    # 태그값 data
-    # 페이로드
-    # url 
-    # 공격유형 가져오기(보류)
-    # 해야할일 = 코드 내에서 더 필요한 DB정보가 무엇인지 정리하기
     def init_data(self):
-
-        # 각 공격 유형에 대한 페이로드
         self.payloads = {
-            "sqli": self.get_data('payloads_sqli', 'payload'),
-            "Reflected_xss": self.get_data('payloads_Reflectedxss', 'payload'),
-            "Stored_xss": self.get_data('payloads_Storedxss', 'payload'),
-            "Dom_based_xss": self.get_data('payloads_Domxss', 'payload'),
-            "or": self.get_data('payloads_or', 'payload'),
+            self.ATTACK_TYPE_SQLI: self.get_data('payloads_sqli', 'payload'),
+            self.ATTACK_TYPE_REFLECTED_XSS: self.get_data('payloads_Reflectedxss', 'payload'),
+            self.ATTACK_TYPE_STORED_XSS: self.get_data('payloads_Storedxss', 'payload'),
+            self.ATTACK_TYPE_DOM_BASED_XSS: self.get_data('payloads_Domxss', 'payload'),
+            self.ATTACK_TYPE_OR: self.get_data('payloads_or', 'payload'),
         }
 
         # 공격할 URL들
         self.urls = self.get_data('urls', 'url')
 
         # 공격에 사용할 데이터
-        # input 태그 정보들이 들어가야할 듯
         self.data = {
-            "or": self.get_data('or_data', 'data'),
-            "Reflected_xss": self.get_data('Reflectedxss_data', 'data'),
-            "Stored_xss": self.get_data('Storedxss_data', 'data'),
-            "Dom_based_xss": self.get_data('Domxss_data', 'data'),
-            "sqli": self.get_data('sqli_data', 'data'),
+            self.ATTACK_TYPE_OR: self.get_data('or_data', 'data'),
+            self.ATTACK_TYPE_REFLECTED_XSS: self.get_data('Reflectedxss_data', 'data'),
+            self.ATTACK_TYPE_STORED_XSS: self.get_data('Storedxss_data', 'data'),
+            self.ATTACK_TYPE_DOM_BASED_XSS: self.get_data('Domxss_data', 'data'),
+            self.ATTACK_TYPE_SQLI: self.get_data('sqli_data', 'data'),
         }
 
 
-def attack(self):
-        # 공격 유형에 따른 페이로드와 데이터를 순회
-        for attack_type in self.payloads.keys():
-        # 각 공격 유형에 대한 페이로드와 데이터
-            payloads = self.payloads[attack_type]
-            data = self.data[attack_type]
+    def test_sqli(self, url, name):
+            sqli_payloads = self.get_data('payloads_sqli', 'payload')
+            for sqli_payload in sqli_payloads:
+                sqli_payload += hashlib.md5(_payload.encode()).hexdigest()
+                sqli_response = requests.get(url, params={name: sqli_payload})
         
-        # url 요청 보내고 HTML 정보 받기
-        for url in self.get_data('urls', 'url'):
-            response = requests.get(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
+                # 응답에서 SQLi 취약점 확인
+                if 'error' in sqli_response.text:
+                    print(f'Possible SQL Injection in {name}')
+                    self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter) VALUES (%s, %s, %s)", (url, 'SQL Injection', name))
 
-        # input 태그 정보 확인 (해야할일 = 필요한 태그는 추가해야함)
-        for input_tag in soup.find_all('input'):
-            name = input_tag.get('name')
-            value = input_tag.get('value')
-
-        # Reflected_XSS 취약점 확인(get요청)
+    def test_reflected_xss(self, url, name):
         Reflected_xss_payloads = self.get_data('Reflected_xss_payload', 'payload')
 
         for Reflected_xss_payload in Reflected_xss_payloads:
@@ -98,45 +95,37 @@ def attack(self):
                 print(f'Possible Reflected XSS in  {name} POST request')
                 self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter, method) VALUES (%s, %s, %s, %s)", (url, 'Reflected XSS', name, 'POST'))
     
-    # Stored_XSS 취약점 확인
-    #보낸 input 값이 서버에 저장되는지(Stored)
-    # -> 위의 웹사이트 url('http://example.com')
-    # 해야할일 : 예시 게시판 글쓰기 URL *이걸 어떻게 구현할지 같이 고민해봐요!* -> 해결?
-    # 해야할일 = Stored_xss_payload에 들어갈 내용 찾아서 정리하기 (DVWA 기준으로)
-        
-            # 'Stored_xss_payload'데이터 가져오기
-            Stored_xss_payloads = self.get_data('payloads_Storedxss', 'payload')
 
-            for Stored_xss_payload in Stored_xss_payloads:
-                Stored_xss_payload += hashlib.md5(Stored_xss_payload.encode()).hexdigest() 
+    def test_stored_xss(self, url, name):
+        Stored_xss_payloads = self.get_data('payloads_Storedxss', 'payload')
+
+        for Stored_xss_payload in Stored_xss_payloads:
+            Stored_xss_payload += hashlib.md5(Stored_xss_payload.encode()).hexdigest() 
                 
                 # 웹사이트를 방문하여 게시판 글쓰기 URL 찾기
-                response = requests.get(url)
-                soup = BeautifulSoup(response.text, 'html.parser')
-                form = soup.find('form', action=True)
-                if form:
-                    post_url = form['action']  # 게시판 글쓰기 URL
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            form = soup.find('form', action=True)
+            if form:
+                post_url = form['action']  # 게시판 글쓰기 URL
                 
-                    # 게시판에 악성 스크립트를 포함한 글을 작성 후
-                    # POST 요청
-                    post_data = {'title': 'Test', 'content': Stored_xss_payload}
-                    post_response = requests.post(post_url, data=post_data)
+                # 게시판에 악성 스크립트를 포함한 글을 작성 후
+                # POST 요청
+                post_data = {'title': 'Test', 'content': Stored_xss_payload}
+                post_response = requests.post(post_url, data=post_data)
 
                     # 글이 정상적으로 작성되었다면 웹사이트를 다시 방문
-                    if post_response.status_code == 200:
-                        response = requests.get(url)
-                        soup = BeautifulSoup(response.text, 'html.parser')
+                if post_response.status_code == 200:
+                    response = requests.get(url)
+                    soup = BeautifulSoup(response.text, 'html.parser')
 
                     # 웹페이지에 악성 스크립트가 포함되어 있다면 Stored XSS 취약점이 존재
-                    if Stored_xss_payload in soup.prettify():
-                        print('Possible Stored XSS in {post_url}')
-                        self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter, method) VALUES (%s, %s, %s, %s)", (url, 'Stored XSS', name, 'POST'))
+                if Stored_xss_payload in soup.prettify():
+                    print('Possible Stored XSS in {post_url}')
+                    self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter, method) VALUES (%s, %s, %s, %s)", (url, 'Stored XSS', name, 'POST'))
 
     
-            # DOM_based_XSS 취약점 확인
-            # DOM 조작을 통해 실행되는지(DOM based)
-            # -> 위의 웹사이트 url('http://example.com')
-            # 해야할일 = DOM_based_xss_payload에 들어갈 내용 찾아서 정리하기 (DVWA 기준으로)
+        def test_dom_based_xss(self, url, name):   
             DOM_based_xss_payloads = self.get_data('DOM_based_xss_payload', 'payload')
             for DOM_based_xss_payload in DOM_based_xss_payloads:
 
@@ -212,17 +201,9 @@ def attack(self):
                 driver.quit()
 
 
-            # SQL Injection 공격 요청 패킷 보내기
-            sqli_payload = "' OR '1'='1"
-            sqli_response = requests.get(url, params={name: sqli_payload})
-        
-            # 응답에서 SQLi 취약점 확인
-            if 'error' in sqli_response.text:
-                print(f'Possible SQL Injection in {name}')
-                self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter) VALUES (%s, %s, %s)", (url, 'SQL Injection', name))
+            
 
-
-
+        def test_or(self, url, name):
             # Open Redirection 확인
             Open_Redirection_payloads = self.get_data('payloads_or', 'payload')
             for or_payload in Open_Redirection_payloads:
@@ -239,11 +220,25 @@ def attack(self):
                 if 'Location' in or_response.headers and or_payload in or_response.headers['Location']:
                     print(f'Possible Open Redirection in {name}')
                     self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter) VALUES (%s, %s, %s)", (url, 'Open Redirection', name))
+        
+        def attack(self):
+            self.connect_db()
+            for url in self.urls:
+                response = requests.get(url)
+                soup = BeautifulSoup(response.text, 'html.parser')
 
-                # DB에 변경 사항 저장
-                self.attackDB.commit()
+                for input_tag in soup.find_all('input'):
+                    name = input_tag.get('name')
 
+                    self.test_sqli(url, name)
+                    self.test_reflected_xss(url, name)
+                    self.test_stored_xss(url, name)
+                    self.test_dom_based_xss(url, name)
+                    self.test_or(url, name)
+
+            self.disconnect_db()
 
 if __name__ == "__main__":
     attack = Attack()
+    attack.init_data()
     attack.attack()
