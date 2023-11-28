@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 import mysql.connector
 
-
 class Attack:
     ATTACK_TYPE_SQLI = 'sqli'
     ATTACK_TYPE_REFLECTED_XSS = 'Reflected_xss'
@@ -203,24 +202,30 @@ class Attack:
 
             
 
-        def test_or(self, url, name):
-            # Open Redirection 확인
-            Open_Redirection_payloads = self.get_data('payloads_or', 'payload')
-            for or_payload in Open_Redirection_payloads:
-                or_response = requests.get(url, params={'name': or_payload}, allow_redirects=False)
+        # 주어진 URL에 대한 HTTP GET 요청을 보냄. allow_redirects=False로 설정하여 리다이렉트를 허용하지 않음 
+        def test_or(url, name):
+            response = requests.get(url, allow_redirects=False)
 
-                # 응답에서 'http'가 포함되어 있다면
-                # Open Redirection 취약점이 존재할 수 있는 신호
-                if 'http' in value:
-                    print(f'Possible Open Redirection in {name} with value {value}')
+            # 만약 응답의 상태 코드가 리다이렉트 코드인 경우(301, 302, 303, 307, 308)
+            if response.status_code in [301, 302, 303, 307, 308]:
+                # 응답 헤더에서 'Location'을 가져와 리다이렉트된 URL을 얻음
+                redirect_url = response.headers.get('Location')
 
-                # 응답 헤더에 'Location'이 있고
-                # 'Location' 값이 우리가 설정한 악성 URL일 때
-                # Open Redirection 취약점이 존재할 수 있는 신호
-                if 'Location' in or_response.headers and or_payload in or_response.headers['Location']:
-                    print(f'Possible Open Redirection in {name}')
-                    self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter) VALUES (%s, %s, %s)", (url, 'Open Redirection', name))
-        
+                # 만약 리다이렉트된 URL이 존재하고, '/'로 시작하지 않고 주어진 'name'으로 시작하지 않는 경우
+                if redirect_url and not redirect_url.startswith('/') and not redirect_url.startswith(name):
+                    # Open redirection이 감지된 경우
+                    print("Open redirection was detected")
+                else:
+                    # Open redirection이 아닌 경우
+                    print("No open redirection")
+            else:
+                # 리다이렉트가 없거나 지원되지 않는 상태 코드인 경우
+                print("No redirection or unsupported redirection code")
+
+                    #자바스크립트를 통한 이동에 대한 구현 추가해야 함 
+     
+                    
+                
         def attack(self):
             self.connect_db()
             for url in self.urls:
