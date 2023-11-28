@@ -204,7 +204,7 @@ class Attack:
 
         # 주어진 URL에 대한 HTTP GET 요청을 보냄. allow_redirects=False로 설정하여 리다이렉트를 허용하지 않음 
         def test_or(url, name):
-            response = requests.get(url, allow_redirects=False)
+            response = requests.get(url, allow_redirects=False) #허용해야되는지.. 허용하지 않아야 하는지.. 모르게써염
 
             # 만약 응답의 상태 코드가 리다이렉트 코드인 경우(301, 302, 303, 307, 308)
             if response.status_code in [301, 302, 303, 307, 308]:
