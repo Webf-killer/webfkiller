@@ -8,7 +8,7 @@ def test_sqli(self, url):
         for input_tag in soup.find_all('input'):
             name = input_tag.get('name')
             for payload in sqli_payloads:
-                manipulated_url = f"{url}?뤼튼=" + payload
+                manipulated_url = f"{url}?param=" + payload
                 response = requests.get(manipulated_url, proxies=self.proxies)
                 if 'error' in response.text:
                     print(f'Possible SQL Injection found in {url} with payload: {payload}')
