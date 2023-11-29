@@ -58,14 +58,8 @@ class Attack:
         DOM_based_xss_payloads = self.get_data('DOM_based_xss_payload', 'payload')
         for DOM_based_xss_payload in DOM_based_xss_payloads:
             # 페이로드를 쿼리 문자열에 추가하여 웹 페이지에 전달
-            manipulated_url_query = url + "?param=" + urllib.parse.quote(DOM_based_xss_payload)
+            manipulated_url_query = f"{url}?{name}=" + urllib.parse.quote(DOM_based_xss_payload)
             self.driver.get(manipulated_url_query)
-            # 페이로드 실행 체크
-            self.check_payload_execution(url, name)
-
-            # 페이로드를 URL 경로에 추가하여 웹 페이지에 전달
-            manipulated_url_path = url + DOM_based_xss_payload
-            self.driver.get(manipulated_url_path)
             # 페이로드 실행 체크
             self.check_payload_execution(url, name)
 
