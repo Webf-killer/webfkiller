@@ -4,17 +4,13 @@ attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",
 mycursor = attackDB.cursor()
 
 # 각 테이블 이름, 열 이름, 데이터 파일 이름을 튜플로 묶어 리스트 생성
-tables_files = [('urls', 'url', 'urls_data.txt'), 
-                ('Reflectedxss_data', 'data', 'Reflectedxss_data.txt'), 
-                ('Storedxss_data', 'data', 'Storedxss_data.txt'), 
-                ('Domxss_data', 'data', 'Domxss_data.txt'), 
-                ('sqli_data', 'data', 'sqli_data.txt'), 
-                ('or_data', 'data', 'or_data.txt'), 
-                ('payloads_Reflectedxss', 'payload', 'payloads_Reflectedxss.txt'), 
-                ('payloads_Storedxss', 'payload', 'payloads_Storedxss.txt'), 
-                ('payloads_Domxss', 'payload', 'payloads_Domxss.txt'), 
+tables_files = [('urls', 'url', 'urls_data.txt'),  
+                ('payloads_ReflectedXss', 'payload', 'payloads_ReflectedXss.txt'), 
+                ('payloads_StoredXss', 'payload', 'payloads_Storedxss.txt'), 
+                ('payloads_DOMXss', 'payload', 'payloads_DomXss.txt'), 
                 ('payloads_sqli', 'payload', 'payloads_sqli.txt'), 
-                ('payloads_or', 'payload', 'payloads_or.txt')]
+                ('payloads_OpenRedirection', 'payload', 'payloads_OpenRedirection.txt')
+                ('vulnerabilities', 'url, type, parameter, payload', 'vulnerabilities_data.txt')]
 
 
 
