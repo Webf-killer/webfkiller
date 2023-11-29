@@ -12,6 +12,8 @@ class Attack:
     ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
     ATTACK_TYPE_SQLI = 'sqli'
     ATTACK_TYPE_STORED_XSS = 'Stored_XSS'
+    ATTACK_TYPE_REFLECTED_XSS = 'Reflected_XSS'
+    ATTACK_TYPE_OPEN_REDIRECTION = 'OpenRedirection'
 
     def __init__(self):
         self.attackDB = self.connect_db()
@@ -69,7 +71,7 @@ class Attack:
         for input_tag in soup.find_all('input'):
             name = input_tag.get('name')
             for payload in sqli_payloads:
-                manipulated_url = f"{url}?{name}=" + payload
+                manipulated_url = f"{url}?뤼튼=" + payload
                 response = requests.get(manipulated_url, proxies=self.proxies)
                 if 'error' in response.text:
                     print(f'Possible SQL Injection found in {url} with payload: {payload}')
@@ -91,29 +93,25 @@ class Attack:
             except Exception as e:
                 print(f"Failed to test stored XSS: {e}")
 
-    # OpenRedirection 테스트 함수
-    def test_or(self, url, name):
-        response = requests.get(url, allow_redirects=False, proxies=self.proxies)
-        if response.status_code in [301, 302, 303, 307, 308]:
-            redirect_url = response.headers.get('Location')
-            if redirect_url and not redirect_url.startswith('/') and not redirect_url.startswith(name):
-                print("Open redirection was detected")
-                # 공격 성공 정보를 데이터베이스에 저장
-                self.save_vulnerability(url, 'OpenRedirection', name)
-            else:
-                print("No open redirection")
-        else:
-            print("No redirection or unsupported redirection code")
+    def test_reflected_xss(self, url):
+        reflected_xss_payloads = self.get_data('payloads_ReflectedXss', 'payload')
+        for payload in reflected_xss_payloads:
+            manipulated_url = f"{url}?name=" + urllib.parse.quote(payload)
+            response = requests.get(manipulated_url, proxies=self.proxies)
+            if payload in response.text:
+                print(f'Reflected XSS payload found in {url} with payload: {payload}')
+                self.save_vulnerability(url, self.ATTACK_TYPE_REFLECTED_XSS, 'name', payload)
 
-        # 자바스크립트를 통한 이동에 대한 구현
-        try:
-            script = "window.location.href = 'http://localhost:8080';"
-            self.driver.execute_script(script)
-            WebDriverWait(self.driver, 10).until(EC.url_changes(url))
-            print("JavaScript redirection was detected")
-            self.save_vulnerability(url, 'JavaScript Redirection', name)
-        except Exception as e:
-            print(f"JavaScript did not redirect as expected: {e}")
+    def test_open_redirection(self, url):
+        open_redirection_payloads = self.get_data('payloads_OpenRedirection', 'payload')
+        for payload in open_redirection_payloads:
+            manipulated_url = f"{url}?name=" + urllib.parse.quote(payload)
+            response = requests.get(manipulated_url, allow_redirects=False, proxies=self.proxies)
+            if response.status_code in [301, 302, 303, 307, 308]:
+                redirect_url = response.headers.get('Location')
+                if redirect_url and redirect_url == payload:
+                    print("Open redirection was detected")
+                    self.save_vulnerability(url, self.ATTACK_TYPE_OPEN_REDIRECTION, 'name', payload)
 
     def attack(self):
         self.connect_db()
