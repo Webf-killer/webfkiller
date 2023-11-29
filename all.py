@@ -49,7 +49,7 @@ class Attack:
             self.mycursor.execute("INSERT INTO vulnerabilities (url, type, parameter) VALUES (%s, %s, %s)", (url, attack_type, param))
 
     def test_dom_based_xss(self, url):
-        DOM_based_xss_payloads = self.get_data('DOM_based_xss_payload', 'payload')
+        DOM_based_xss_payloads = self.get_data('payloads_Domxss', 'payload')
         for DOM_based_xss_payload in DOM_based_xss_payloads:
             manipulated_url_query = f"{url}?name=" + urllib.parse.quote(DOM_based_xss_payload)
             self.driver.get(manipulated_url_query)

@@ -3,11 +3,9 @@ import mysql.connector
 attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
 mycursor = attackDB.cursor()
 
-tables = ['urls', 'Reflectedxss_data', 'Storedxss_data', 'Domxss_data', 
+tables = ['urls', 'payloads_ReflectedXss', 'payloads_StoredXss', 'payloads_DOMXss', 
           'sqli_data', 'or_data', 'payloads_Reflectedxss', 
-          'payloads_Storedxss', 'payloads_Domxss', 'payloads_sqli', 'payloads_or',
-          'success_Reflectedxss', 'success_Storedxss', 'success_Domxss',
-          'success_sqli','success_or']
+          'payloads_sqli', 'payloads_OpenRedirection', 'vulnerabilities']
 
 
 for table in tables:

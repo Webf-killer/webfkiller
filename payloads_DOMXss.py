@@ -55,7 +55,7 @@ class Attack:
     # DOM-based XSS 테스트 함수
     def test_dom_based_xss(self, url, name):   
         # 데이터베이스에서 페이로드를 가져옴
-        DOM_based_xss_payloads = self.get_data('DOM_based_xss_payload', 'payload')
+        DOM_based_xss_payloads = self.get_data('payloads_DOMXss', 'payload')
         for DOM_based_xss_payload in DOM_based_xss_payloads:
             # 페이로드를 쿼리 문자열에 추가하여 웹 페이지에 전달
             manipulated_url_query = f"{url}?{name}=" + urllib.parse.quote(DOM_based_xss_payload)
