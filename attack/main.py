@@ -34,20 +34,22 @@ class Attack:
             return [row[0] for row in results]
         except mysql.connector.Error as err:
             print(f"Failed to fetch data from database: {err}")
-            return []
+            return []   
     
-    
-
 
     def __init__(self):
         self.attackDB = self.connect_db()
         self.mycursor = self.attackDB.cursor()
         self.proxies = {'http': 'http://localhost:8080', 'https': 'http://localhost:8080'}
         self.driver = webdriver.Chrome()
+          
+        # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
+        while True:
+            time.sleep(10)
+
         self.urls = self.get_data('urls', 'url')
         
         
-
     def attack(self):
         self.connect_db()
         with ThreadPoolExecutor(max_workers=5) as executor:
@@ -59,7 +61,4 @@ class Attack:
 if __name__ == "__main__":
     attack = Attack()
     attack.attack()
-     
-    # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
-    while True:
-        time.sleep(10)
+   
