@@ -19,7 +19,7 @@ class Attack:
 
     def connect_db(self):  #패스워드 - 확인 필요 
         try:
-            return mysql.connector.connect(host="localhost", user="root", password="root", database="attackDB")
+            return mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
         except mysql.connector.Error as err:
             print(f"Failed to connect to database: {err}")
             return None
@@ -46,8 +46,7 @@ class Attack:
         # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
         while True:
             time.sleep(10)
-
-        self.urls = self.get_data('urls', 'url')
+            self.urls = self.get_data('urls', 'url')
         
         
     def attack(self):

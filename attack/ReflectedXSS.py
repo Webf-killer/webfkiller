@@ -1,6 +1,8 @@
 import requests
 import hashlib
+import random
 import urllib.parse
+import string
 
 def generate_random_string(self, length):
         characters = string.ascii_letters + string.digits
