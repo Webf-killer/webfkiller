@@ -1,4 +1,5 @@
 import requests
+import hashlib
 import urllib.parse
 
 def generate_random_string(self, length):
