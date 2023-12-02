@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import mysql.connector
 import time
-import manage_db, DomXSS, StoredXSS,ReflectedXSS, OR, SQLi
+import manage_db, DomXSS, StoredXSS, ReflectedXSS, OR, SQLi
 
 class Attack:
     ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
@@ -23,6 +23,7 @@ class Attack:
         except mysql.connector.Error as err:
             print(f"Failed to connect to database: {err}")
             return None
+
     def disconnect_db(self):
         if self.attackDB:
             self.attackDB.close()
@@ -35,19 +36,32 @@ class Attack:
         except mysql.connector.Error as err:
             print(f"Failed to fetch data from database: {err}")
             return []   
-    
 
     def __init__(self):
         self.attackDB = self.connect_db()
         self.mycursor = self.attackDB.cursor()
         self.proxies = {'http': 'http://localhost:8080', 'https': 'http://localhost:8080'}
         self.driver = webdriver.Chrome()
-          
+        self.driver.get("http://localhost/login.php")  # DVWA 페이지를 바로 연결
+
+        # DVWA 로그인
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "username")))
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "password")))
+        WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "Login")))
+
+        username_input = self.driver.find_element(By.NAME, "username")
+        password_input = self.driver.find_element(By.NAME, "password")
+        login_button = self.driver.find_element(By.NAME, "Login")
+
+        username_input.send_keys("admin")
+        password_input.send_keys("password")
+        login_button.click()
+
+
         # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
         while True:
             time.sleep(10)
             self.urls = self.get_data('urls', 'url')
-        
         
     def attack(self):
         self.connect_db()
@@ -60,4 +74,5 @@ class Attack:
 if __name__ == "__main__":
     attack = Attack()
     attack.attack()
+
    
