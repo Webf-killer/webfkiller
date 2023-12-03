@@ -78,23 +78,7 @@ class Attack:
 
     def process_url(self, url):
         print(f"Sending GET request to {url} with proxies {self.proxies}")  # GET 요청 보내는 것을 출력
-        try:
-            response = requests.get(url, proxies=self.proxies)
-            response.raise_for_status()  # HTTP 요청 오류 확인
-        except requests.exceptions.HTTPError as err:
-            print(f"HTTP error occurred: {err}")
-            return  # 에러가 발생하면 함수를 종료
-        except requests.exceptions.RequestException as err:
-            print(f"Error occurred: {err}")
-            return  # 에러가 발생하면 함수를 종료
-
-        try:
-            print("Creating OpenRedirectionTest instance")  # 추가된 로그 메시지
-            or_test = OR.OpenRedirectionTest(self)
-            print("Running test_open_redirection")  # 추가된 로그 메시지
-            or_test.test_open_redirection(url)
-        except Exception as e:
-            print(f"Error occurred while testing for open redirection: {e}")
+        response = requests.get(url, proxies=self.proxies)
 
 if __name__ == "__main__":
     attack = Attack()
