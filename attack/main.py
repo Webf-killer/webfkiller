@@ -1,14 +1,15 @@
-import urllib.parse
+import mysql.connector
 import requests
+import urllib.parse
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
-import mysql.connector
 import time
-import manage_db, DomXSS, StoredXSS, ReflectedXSS, OR, SQLi
+import DomXSS, StoredXSS, ReflectedXSS, OR, SQLi
 
 class Attack:
     ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
@@ -17,7 +18,7 @@ class Attack:
     ATTACK_TYPE_REFLECTED_XSS = 'Reflected_XSS'
     ATTACK_TYPE_OPEN_REDIRECTION = 'OpenRedirection'
 
-    def connect_db(self):  #패스워드 - 확인 필요 
+    def connect_db(self):
         try:
             return mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
         except mysql.connector.Error as err:
@@ -40,9 +41,12 @@ class Attack:
     def __init__(self):
         self.attackDB = self.connect_db()
         self.mycursor = self.attackDB.cursor()
+        self.urls = []  # 먼저 빈 리스트로 초기화
         self.proxies = {'http': 'http://localhost:8080', 'https': 'http://localhost:8080'}
-        self.driver = webdriver.Chrome()
-        self.driver.get("http://localhost/login.php")  # DVWA 페이지를 바로 연결
+        chrome_options = Options()
+        chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
+        self.driver = webdriver.Chrome(options=chrome_options)
+        self.driver.get("http://sekurity.online:8080/login.php")  # DVWA 페이지를 바로 연결
 
         # DVWA 로그인
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "username")))
@@ -57,22 +61,44 @@ class Attack:
         password_input.send_keys("password")
         login_button.click()
 
-
         # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
-        while True:
+        while len(self.urls) == 0:
             time.sleep(10)
             self.urls = self.get_data('urls', 'url')
+            print(f"Current URLs: {self.urls}")  # 현재 urls를 출력
         
     def attack(self):
         self.connect_db()
         with ThreadPoolExecutor(max_workers=5) as executor:
             for url in self.urls:
+                print(f"Processing URL: {url}")  # 처리 중인 url을 출력
                 executor.submit(self.process_url, url)
         self.driver.quit()
         self.disconnect_db()
 
+    def process_url(self, url):
+        print(f"Sending GET request to {url} with proxies {self.proxies}")  # GET 요청 보내는 것을 출력
+        try:
+            response = requests.get(url, proxies=self.proxies)
+            response.raise_for_status()  # HTTP 요청 오류 확인
+        except requests.exceptions.HTTPError as err:
+            print(f"HTTP error occurred: {err}")
+            return  # 에러가 발생하면 함수를 종료
+        except requests.exceptions.RequestException as err:
+            print(f"Error occurred: {err}")
+            return  # 에러가 발생하면 함수를 종료
+
+        try:
+            print("Creating OpenRedirectionTest instance")  # 추가된 로그 메시지
+            or_test = OR.OpenRedirectionTest(self)
+            print("Running test_open_redirection")  # 추가된 로그 메시지
+            or_test.test_open_redirection(url)
+        except Exception as e:
+            print(f"Error occurred while testing for open redirection: {e}")
+
 if __name__ == "__main__":
     attack = Attack()
     attack.attack()
+
 
    
