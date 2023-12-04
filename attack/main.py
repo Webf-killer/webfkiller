@@ -10,6 +10,12 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import time
 import DomXSS, StoredXSS, ReflectedXSS, OR, SQLi
+import re
+import socket
+from importlib import reload
+import DomXSS
+reload(DomXSS)
+from DomXSS import DomXSS
 
 class Attack:
     ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
@@ -18,6 +24,24 @@ class Attack:
     ATTACK_TYPE_REFLECTED_XSS = 'Reflected_XSS'
     ATTACK_TYPE_OPEN_REDIRECTION = 'OpenRedirection'
 
+    def check_proxy_server(self):
+        try:
+            host, port = self.proxies['http'].replace('http://', '').split(':')
+            sock = socket.create_connection((host, int(port)), timeout=5)
+            sock.close()
+            return True
+        except Exception as e:
+            print(f"Failed to connect to proxy server: {e}")
+            return False
+        
+    def check_web_server(self, url):
+        try:
+            response = requests.get(url, timeout=5)
+            return response.status_code == 200
+        except Exception as e:
+            print(f"Failed to connect to web server: {e}")
+            return False
+        
     def connect_db(self):
         try:
             return mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
@@ -28,15 +52,7 @@ class Attack:
     def disconnect_db(self):
         if self.attackDB:
             self.attackDB.close()
-
-    def get_data(self, table, column):
-        try:
-            self.mycursor.execute(f"SELECT {column} FROM {table}")
-            results = self.mycursor.fetchall()
-            return [row[0] for row in results]
-        except mysql.connector.Error as err:
-            print(f"Failed to fetch data from database: {err}")
-            return []   
+ 
 
     def __init__(self):
         self.attackDB = self.connect_db()
@@ -47,6 +63,8 @@ class Attack:
         chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])
         self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.get("http://sekurity.online:8080/login.php")  # DVWA 페이지를 바로 연결
+        self.payloads = self.get_data('payloads_DOMXss', 'payload')
+        self.dom_xss_detector = DomXSS(self.driver, re.compile(r'<script>|</script>|javascript:|onload=|onerror='), self.payloads, self.mycursor, self.attackDB)
 
         # DVWA 로그인
         WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.NAME, "username")))
@@ -63,22 +81,42 @@ class Attack:
 
         # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
         while len(self.urls) == 0:
-            time.sleep(10)
+            time.sleep(5)
             self.urls = self.get_data('urls', 'url')
             print(f"Current URLs: {self.urls}")  # 현재 urls를 출력
         
+
+
+    def get_data(self, table, column):
+        try:
+            self.mycursor.execute(f"SELECT {column} FROM {table}")
+            results = self.mycursor.fetchall()
+            return [row[0] for row in results]
+        except mysql.connector.Error as err:
+            print(f"Failed to fetch data from database: {err}")
+            return []  
+        
+
     def attack(self):
         self.connect_db()
         with ThreadPoolExecutor(max_workers=5) as executor:
             for url in self.urls:
+                if not self.check_web_server(url):
+                    print(f"Web server {url} is not available.")
+                    continue
                 print(f"Processing URL: {url}")  # 처리 중인 url을 출력
                 executor.submit(self.process_url, url)
-        self.driver.quit()
+        #self.driver.quit()
         self.disconnect_db()
 
     def process_url(self, url):
         print(f"Sending GET request to {url} with proxies {self.proxies}")  # GET 요청 보내는 것을 출력
-        response = requests.get(url, proxies=self.proxies)
+        try:
+            response = requests.get(url, timeout=5)
+            self.dom_xss_detector.test_dom_based_xss(url)
+            print(f"Response status code: {response.status_code}")  # 응답의 상태 코드 출력
+        except Exception as e:
+            print(f"Failed to send GET request: {e}")
 
 if __name__ == "__main__":
     attack = Attack()
