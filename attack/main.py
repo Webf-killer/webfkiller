@@ -44,7 +44,7 @@ class Attack:
         
     def connect_db(self):
         try:
-            return mysql.connector.connect(host="localhost", user="root", password="1111", database="attackDB")
+            return mysql.connector.connect(host="localhost", user="root", password="root", database="attackDB")
         except mysql.connector.Error as err:
             print(f"Failed to connect to database: {err}")
             return None
