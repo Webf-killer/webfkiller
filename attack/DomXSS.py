@@ -1,38 +1,95 @@
+# 필요한 모듈들을 임포트합니다.
 import urllib.parse
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+import requests
+import mysql.connector
+import re
 
-#JavaScript는 웹 페이지의 DOM을 조작해 웹 페이지의 내용이나 구조를 동적으로 변경
-#JavaScript 코드가 사용자로부터 받은 입력을 적절하게 처리하지 않고 그대로 DOM에 삽입하거나 실행
-# = XSS 공격
+# DOM 기반 XSS 공격을 테스트하기 위한 클래스를 정의합니다.
+class DomXSS:
+    # 생성자에서는 웹드라이버, XSS 공격 패턴, 페이로드 리스트, 데이터베이스 커서, 데이터베이스 연결을 인자로 받습니다.
+    def __init__(self, driver, dom_xss_pattern, payloads, mycursor, attackDB):
+        self.driver = driver  # 웹드라이버 설정
+        self.dom_xss_pattern = dom_xss_pattern  # XSS 공격 패턴 설정
+        self.payloads = payloads  # 페이로드 리스트 설정
+        self.mycursor = mycursor  # 데이터베이스 커서 설정
+        self.attackDB = attackDB  # 데이터베이스 연결 설정
+        self.ATTACK_TYPE_DOM_BASED_XSS = 'DOM-based XSS'  # 공격 유형을 문자열로 설정
 
-def test_dom_based_xss(self, url):
-        #XSS 공격에 사용할 페이로드들을 가져오기
-        DOM_based_xss_payloads = self.get_data('payloads_Domxss', 'payload')
-        #각 페이로드에 대해 
-        for DOM_based_xss_payload in DOM_based_xss_payloads:
-            #페이로드를 쿼리 문자열로 추가하여 새로운 URL을 만들기
-            #공격 페이로드가 DOM에 삽입되는 부분
-            manipulated_url_query = f"{url}?name=" + urllib.parse.quote(DOM_based_xss_payload)
-            #새로운 URL로 웹 드라이버를 이용해 요청을 보내기
-            print(f"Trying with payload: {DOM_based_xss_payload}")  # 페이로드를 출력
-            self.driver.get(manipulated_url_query)
-            self.check_payload_execution(url, 'name')
-
-# 특정 엘리먼트의 존재 확인
-def check_payload_execution(self, url, name):
+    # 주어진 URL에 대해 DOM 기반 XSS 공격을 테스트하는 메소드입니다.
+    def test_dom_based_xss(self, url):
+        print("test_dom_based_xss called")  # 메소드 호출 로깅
         try:
-            # 웹 페이지에서 특정 id를 가진 버튼을 찾아 클릭
-            # 버튼 이름이 각각 다를것으로  추정? 
-            # JavaScript 코드를 실행시키는 트리거 역할
-            # JavaScript 코드는 클릭 이벤트를 처리하기 위해 DOM을 조작
-            self.driver.find_element_by_id('button_id').click()
-            print(f"Clicked the button in {url}")  # 버튼 클릭 메시지를 출력
-            #웹 페이지에서 새로운 HTML 요소(=XSS 공격 페이로드의 실행 결과, = 새로운 엘리먼트 )정 가 나타날 때까지 최대 10초 동안 기다리기
-            #새로운 엘리먼트는 XSS 페이로드가 실행되었을 때만 생성되는 조건
-            WebDriverWait(self.driver, 10).until(EC.presence_of_element_located((By.ID, 'newElement')))
-            print(f'Payload triggered a button click in {url}')
-            self.save_vulnerability(url, self.ATTACK_TYPE_DOM_BASED_XSS, name)
+            parsed_url = urllib.parse.urlparse(url)  # URL 파싱
+            #parameters = urllib.parse.parse_qs(parsed_url.query)  # URL의 쿼리 파라미터 추출
+            # if not parameters:  # 쿼리 파라미터가 없으면 메소드 종료
+                # print("No parameters found in the URL.")
+                # return
+            #parameters = list(parameters.keys())[:2]  # 첫 번째와 두 번째 파라미터만 추출
+            DOM_based_xss_payloads = self.payloads  # XSS 공격에 사용할 페이로드들을 가져오기
+            for DOM_based_xss_payload in DOM_based_xss_payloads:  # 각 페이로드에 대해
+                #for parameter in parameters:  # 유력한 파라미터에 대해 XSS 공격 시도
+                    manipulated_url_query = f"{url}?default=" + urllib.parse.quote(DOM_based_xss_payload)
+                    print(f"Trying with payload: {DOM_based_xss_payload} on parameter: default")
+                    self.driver.get(manipulated_url_query)  # XSS 공격 시도
+                    self.check_payload_execution(url, DOM_based_xss_payload, 'default')  # XSS 공격이 성공했는지 확인
         except Exception as e:
-            print(f"Payload did not trigger a button click as expected: {e}")
+            print(f"Error in test_dom_based_xss: {e}")  # 에러 메시지 출력
+
+    # XSS 공격이 성공했는지 확인하는 메소드입니다.
+    def check_payload_execution(self, url, payload, parameter):
+        print("check_payload_execution called")  # 메소드 호출 로깅
+        try:
+            response_body = self.driver.page_source  # 웹 페이지의 응답 본문을 가져옴
+            if self.dom_xss_pattern.search(response_body):  # 응답 본문에서 XSS 공격 패턴을 찾음
+                print(f"Possible DOM-based XSS detected in response body of {url}")  # 공격 성공 메시지 출력
+        except Exception as e:
+            print(f"Error in check_payload_execution: {e}")  # 에러 메시지 출력
+
+    # HTTP 요청에서 XSS 공격 패턴을 찾는 메소드입니다.
+    def detect_dom_xss(self, request):
+        print("detect_dom_xss called")  # 메소드 호출 로깅
+        try:
+            method = request["method"]  # HTTP 메소드를 가져옴
+            if self.dom_xss_pattern.search(request["url"]):  # URL에서 XSS 패턴을 찾음
+                print("Possible DOM-based XSS detected in request URL")  # 공격 성공 메시지 출력
+            for header, value in request["headers"].items():  # 각 헤더에 대해
+                if self.dom_xss_pattern.search(value):  # 헤더 값에서 XSS 패턴을 찾음
+                    print(f"Possible DOM-based XSS detected in request header: {header}")  # 공격 성공 메시지 출력
+            if method in ["POST", "PUT", "DELETE"]:
+                if self.dom_xss_pattern.search(request["body"]):  # 요청 본문에서 XSS 패턴을 찾음
+                    print("Possible DOM-based XSS detected in request body")  # 공격 성공 메시지 출력
+            response = requests.get(request["url"], timeout=5)  # 요청 URL로 HTTP 요청을 보냄
+            if self.dom_xss_pattern.search(response.text):  # 응답 본문에서 XSS 패턴을 찾음
+                print("Possible DOM-based XSS detected in response body")  # 공격 성공 메시지 출력
+        except Exception as e:
+            print(f"Error in detect_dom_xss: {e}")  # 에러 메시지 출력
+
+    # HTTP 응답에서 XSS 공격 패턴을 찾는 메소드입니다.
+    def detect_dom_xss_in_response(self, response):
+        print("detect_dom_xss_in_response called")  # 메소드 호출 로깅
+        try:
+            if self.dom_xss_pattern.search(response.url):  # 응답 URL에서 XSS 패턴을 찾음
+                print("Possible DOM-based XSS detected in response URL")  # 공격 성공 메시지 출력
+            for header, value in response.headers.items():  # 각 헤더에 대해
+                if self.dom_xss_pattern.search(value):  # 헤더 값에서 XSS 패턴을 찾음
+                    print(f"Possible DOM-based XSS detected in response header: {header}")  # 공격 성공 메시지 출력
+            if self.dom_xss_pattern.search(response.text):  # 응답 본문에서 XSS 패턴을 찾음
+                print("Possible DOM-based XSS detected in response body")  # 공격 성공 메시지 출력
+        except Exception as e:
+            print(f"Error in detect_dom_xss_in_response: {e}")  # 에러 메시지 출력
+
+    # 취약점을 데이터베이스에 저장하는 메소드입니다.
+    def save_vulnerability(self, url, attack_type, parameter):
+        print("save_vulnerability called")  # 메소드 호출 로깅
+        try:
+            query = "INSERT INTO vulnerabilities (url, attack_type, parameter) VALUES (%s, %s, %s)"  # 쿼리 작성
+            values = (url, attack_type, parameter)  # 쿼리에 바인딩할 값
+            self.mycursor.execute(query, values)  # 쿼리 실행
+            self.attackDB.commit()  # 데이터베이스에 반영
+            print(f"Vulnerability saved: {url} {attack_type} {parameter}")  # 저장 성공 메시지 출력
+        except mysql.connector.Error as err:
+            print(f"Error in save_vulnerability: {err}")  # 에러 메시지 출력
+
