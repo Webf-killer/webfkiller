@@ -1,46 +1,76 @@
-from mitmproxy import http
+# pip install mitmproxy selenium webdriver_manager psutil
 
-WhiteList_url = [  # 필터링 목록 (화이트리스트)
-    "http://sekurity.online:8080/",
-]
-BlackList_url = [  # 필터링 목록 (블랙리스트)
-    ".gif",
-    ".css",
-    ".js",
-    ".png",
-]
+# 인증서 추가 방법
+# 1. %USERPROFILE%\.mitmproxy\mitmproxy-ca-cert.cer 실행
+# 2. 인증서 설치 -> 로컬 컴퓨터 -> 모든인증서를 다음 저장소에 저장
+# 3. 신뢰할 수 있는 루트 인증 기관 -> 마침
 
 
-# CLI 출력 파트-----------
-def request(flow: http.HTTPFlow) -> None:
-    req_url = str(flow.request.url)
-    req_method = str(flow.request.method)
-    req_headers = str(flow.request.headers)
-    req_raw = str(flow.request.text)  # 한글 처리를 위한 인코딩
-
-    if any(domain in req_url for domain in WhiteList_url):  # 화이트리스트로 받기
-        if not any(domain2 in req_url for domain2 in BlackList_url):  # 불필요데이터(이미지등)
-            print("\\n[Request]")
-            print(f"URL: {req_url}")  # URL표시
-            print(f"Method: {req_method}")  # 요청메소드
-            print(f"Headers: {req_headers}")  # 헤더표시
-            print(f"Raw: {req_raw}")  # raw데이터
+import subprocess
+import threading
+import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+import psutil
 
 
-def response(flow: http.HTTPFlow) -> None:
-    res_url = str(flow.request.url)
-    res_code = str(flow.response.status_code)
-    res_headers = str(flow.response.headers)
-    res_raw = str(flow.response.text)  # 한글 처리를 위한 인코딩
-    content_type = flow.response.headers.get("content-type", "")
+def process_kill(name):
+    """중복 실행중인 프로세스 종료"""
+    for proc in psutil.process_iter():
+        if proc.name() == name:
+            proc.kill()
 
-    if any(domain in res_url for domain in WhiteList_url):  # 화이트리스트로 받기
-        if not any(domain2 in res_url for domain2 in BlackList_url):  # 불필요데이터(이미지등)
-            if not content_type.startswith(
-                ("image/", "video/", "audio/")
-            ):  # 불필요 정보 필터링
-                print("\\n[Response]")
-                print(f"URL: {res_url}")  # URL표시
-                print(f"Method: {res_code}")  # 상태코드
-                print(f"Headers: {res_headers}")  # 헤더표시
-                print(f"Raw: {res_raw}")  # raw데이터
+
+process_kill("mitmproxy")
+
+
+# mitmproxy 서버 실행 함수
+def run_mitmproxy():
+    subprocess.call(
+        [
+            "mitmweb",  # 웹 인터페이스 실행
+            "-s",  # 사용할 스크립트 지정
+            "mitmproxy_script.py",  # 사용할 스크립트
+            "--web-port",  # 인터페이스 실행포트(감시포트)
+            "8081",
+            "--mode",  # 작동모드설정
+            "regular",  # 모든 패킷 중계
+            "--listen-port",  # 감시할 네트워크 포트(프록시 포트)
+            "8080",
+            "--showhost",  # 호스트이름 보여줌
+        ]
+    )
+
+
+# Selenium을 사용하여 프록시 서버에 접속하는 함수
+def run_selenium():
+    time.sleep(10)  # mitmproxy가 시작되기를 기다림
+    proxy = "localhost:8080"
+    chrome_options = Options()  # 옵션 초기화
+    chrome_options.add_argument("--start-maximized")  # 셀레니움 크기 최대화
+    chrome_options.add_argument("--incognito")  # 시크릿모드
+    # chrome_options.add_argument("--ignore-certificate-errors")  # 모든 인증서 오류 무시(필요시 사용)
+    chrome_options.add_argument(f"--proxy-server=http://{proxy}")  # 프록시 지성
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=chrome_options
+    )
+    driver.get("http://sekurity.online:8080/login.php")  # 시작화면
+    # driver.get("http://example.com")  # 시작화면
+
+    # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
+    while True:
+        time.sleep(3)
+
+
+# mitmproxy 스레드 실행
+mitmproxy_thread = threading.Thread(target=run_mitmproxy)
+mitmproxy_thread.start()
+
+# Selenium 스레드 실행
+selenium_thread = threading.Thread(target=run_selenium)
+selenium_thread.start()
+
+# 데모를 위해 일정 시간 후 스크립트 종료 (필요에 따라 제거하거나 수정)
+time.sleep(600)  # 예: 10분(600초) 동안 실행

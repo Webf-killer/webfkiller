@@ -56,7 +56,7 @@ def run_selenium():
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=chrome_options
     )
-    driver.get("http://seku-assign.iptime.org:9999/")  # 시작화면
+    driver.get("http://sekurity.online:8080/login.php")  # 시작화면
     # driver.get("http://example.com")  # 시작화면
 
     # 페이지를 열어두고, 사용자가 직접 종료할 때까지 기다림
