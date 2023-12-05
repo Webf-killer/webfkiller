@@ -56,13 +56,15 @@ class OpenRedirection:
 
         # HTTP 상태 코드 3xx와 함께 'Location' 헤더를 포함하는지 확인
         if response.status_code in [301, 302, 303, 307, 308] and 'Location' in response.headers:
-            print("Server-side redirection detected to:", response.headers['Location'])
-            server_side_redirect_detected = True
+            redirect_header = response.headers.get('Location')
+            if redirect_header and not redirect_header.startswith('/') and not redirect_header.startswith(domain):
+                print("Server-side redirection detected to:", response.headers['Location'])
+                server_side_redirect_detected = True
 
-        # 'Refresh' 헤더를 사용하는 리다이렉트 감지
-        if 'Refresh' in response.headers:
-            print("Server-side redirection (via Refresh header) detected. Content:", response.headers['Refresh'])
-            server_side_redirect_detected = True
+        # 'Refresh' 헤더를 사용하는 리다이렉트 감지 (추후 추가 예정)
+        # if 'Refresh' in response.headers:
+        #     print("Server-side redirection (via Refresh header) detected. Content:", response.headers['Refresh'])
+        #     server_side_redirect_detected = True
 
         if not server_side_redirect_detected:
             print("No server-side redirection was detected")

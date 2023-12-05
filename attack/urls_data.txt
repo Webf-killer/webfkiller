@@ -1,2 +1,1 @@
-http://localhost/XSS/SQLI
-http://localhost/open_redirect
+http://sekurity.online:8080/vulnerabilities/xss_d/
