@@ -4,6 +4,7 @@ def test_or(self, url, domain):  # Attack 객체를 첫 번째 인자로 받음+
     #main에서 생성된 WebDriver 객체를 이용하여 페이지 이동 (redirect 페이지로 이동)
     self.driver.get(url)
 
+    # 페이지를 완전히 로드한 후의 상태를 확인 (클라이언트 측 리다이렉트 감지를 위함)
     #리다이렉트 이후의 response 가져와서 url 가져오기
     redirect_url = self.driver.current_url
 
