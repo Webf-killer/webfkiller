@@ -16,6 +16,7 @@ from importlib import reload
 import DomXSS
 reload(DomXSS)
 from DomXSS import DomXSS
+from OR import test_or
 
 class Attack:
     ATTACK_TYPE_DOM_BASED_XSS = 'Dom_based_xss'
@@ -115,8 +116,17 @@ class Attack:
             response = requests.get(url, timeout=5)
             self.dom_xss_detector.test_dom_based_xss(url)
             print(f"Response status code: {response.status_code}")  # 응답의 상태 코드 출력
+        
+            # 여기에서 test_or 함수를 호출
+            test_or(self, url, 'example')  # Attack 객체를 인자로 전달
+        
         except Exception as e:
             print(f"Failed to send GET request: {e}")
+
+        
+
+
+
 
 if __name__ == "__main__":
     attack = Attack()
