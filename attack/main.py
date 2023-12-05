@@ -122,8 +122,8 @@ class Attack:
             print(f"Failed to send GET request: {e}")
 
         
-    def process_or(self, url):
-        current_url = attack.driver.current_url #현재 url가져오기 
+    def process_or(self, current_url):
+        #current_url : 현재 url가져오기 
         domain = urlparse(current_url).netloc #현재 url의 도메인 
         test_or(self, current_url, domain) #url과 도메인 가져가기 
        
