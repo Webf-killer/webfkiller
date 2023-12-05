@@ -6,6 +6,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from urllib.parse import urlparse #OR_도메인 정보 가져올 때 필요
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor
 import time
@@ -117,16 +118,15 @@ class Attack:
             self.dom_xss_detector.test_dom_based_xss(url)
             print(f"Response status code: {response.status_code}")  # 응답의 상태 코드 출력
         
-            # 여기에서 test_or 함수를 호출
-            test_or(self, url, 'example')  # Attack 객체를 인자로 전달
-        
         except Exception as e:
             print(f"Failed to send GET request: {e}")
 
         
-
-
-
+    def process_or(self, url):
+        current_url = attack.driver.current_url #현재 url가져오기 
+        domain = urlparse(current_url).netloc #현재 url의 도메인 
+        test_or(self, current_url, domain) #url과 도메인 가져가기 
+       
 
 if __name__ == "__main__":
     attack = Attack()
