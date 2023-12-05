@@ -67,5 +67,5 @@ class OpenRedirection:
         #     server_side_redirect_detected = True
 
         if not server_side_redirect_detected:
-            print("No server-side redirection was detected")
+            print("server-side redirection was not detected")
 
