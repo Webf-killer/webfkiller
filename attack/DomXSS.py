@@ -92,4 +92,3 @@ class DomXSS:
             print(f"Vulnerability saved: {url} {attack_type} {parameter}")  # 저장 성공 메시지 출력
         except mysql.connector.Error as err:
             print(f"Error in save_vulnerability: {err}")  # 에러 메시지 출력
-

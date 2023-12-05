@@ -130,6 +130,3 @@ class Attack:
 if __name__ == "__main__":
     attack = Attack()
     attack.attack()
-
-
-   
