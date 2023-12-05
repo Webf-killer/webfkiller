@@ -1,6 +1,6 @@
 import mysql.connector
 # MySQL에 연결
-attackDB = mysql.connector.connect(host="localhost",user="root",password="1111",database="attackDB")
+attackDB = mysql.connector.connect(host="localhost",user="root",password="root",database="attackDB")
 mycursor = attackDB.cursor()
 
 # 각 테이블 이름, 열 이름, 데이터 파일 이름을 튜플로 묶어 리스트 생성
@@ -35,7 +35,6 @@ for table, column, file in tables_files:
 
 
    
-
 
 
 
