@@ -115,7 +115,7 @@ class Attack:
             request = requests.Request('GET', url).prepare()
 
             # GET 요청 보내기
-            response = requests.get(url, timeout=5)
+            response = requests.get(url, timeout=5, allow_redirects=False) 
 
             # DOM-based XSS에 대한 공격을 수행
             self.dom_xss_detector.test_dom_based_xss(url)

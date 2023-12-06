@@ -22,7 +22,7 @@ class OpenRedirection:
         url = request.url
         
         # WebDriver를 이용하여 리다이렉트 탐지
-        current_url = self.driver.current_url
+        
         self.driver.get(url)
         redirect_url = self.driver.current_url
         self.check_redirection(url, redirect_url)
