@@ -7,22 +7,25 @@ class OpenRedirection:
 
     def __init__(self, driver):  
         self.driver = driver 
-
+    
+    def is_relative(self, url):
+        # 상대 경로 여부를 확인하는 함수
+        return not bool(urllib.parse.urlparse(url).netloc)
+    
     def test_or(self, request, response):
         url = request.url
-        domain = urllib.parse.urlparse(url).netloc
+        domain = urllib.parse.urlparse(url).netloc #리다이렉트 요청 url의 도메인 추출 
 
         # WebDriver를 이용하여 리다이렉트 탐지
         self.driver.get(url)
         redirect_url = self.driver.current_url
-        #웹 드라이버가 현재 접근한 URL (self.driver.current_url)과 처음에 요청한 URL (url)이 동일한지 비교하여 리다이렉트를 감지
-        #상대 경로로 시작하는지 (redirect_url.startswith('/'))도 확인
-        #리다이렉트가 동일한 도메인 내부나 동일한 웹 페이지 내부로 이루어진 것이 아닌지를 확인
-        if  redirect_url != url and not redirect_url.startswith('/') and not redirect_url.startswith(domain):
+        #웹 드라이버가 현재 접근한 URL (self.driver.current_url)과 처음에 요청한 URL (url)의 도메인이 동일한지 비교하여 리다이렉트를 감지
+        #상대 경로로 시작하는지 (redirect_url.startswith('/')),
+        #리다이렉트가 동일한 도메인 내부나 동일한 웹 페이지 내부로 이루어진 것이 아닌지를 통해 검증 
+        if  redirect_url != url and not self.is_relative(redirect_url) and self.extract_domain(redirect_url) != domain:
             print("WebDriver-based open redirection was detected")
         else:
-            print("No WebDriver-based open redirection")
-
+            print("WebDriver-based open redirection was not detected")
 
 
         # 클라이언트 측 리다이렉트 탐지
@@ -31,9 +34,9 @@ class OpenRedirection:
         if  redirect_url != url and not redirect_url.startswith('/') and not redirect_url.startswith(domain):
             print("Client-side open redirection was detected")
         else:
-            print("No client-side open redirection")
+            print("Client-side open redirection was not detected")
 
-        # 추가한 부분
+        # 추가한 부분   
         soup = BeautifulSoup(response.text, 'html.parser')
 
         # HTML meta 태그를 사용하는 리다이렉트 감지
