@@ -1,6 +1,6 @@
 import mysql.connector
 
-attackDB = mysql.connector.connect(host="localhost",user="root",password="root",database="attackDB")
+attackDB = mysql.connector.connect(host="localhost",user="root",password="rudtj2306!",database="attackDB")
 mycursor = attackDB.cursor()
 
 tables = ['urls', 'payloads_ReflectedXss', 'payloads_StoredXss', 
