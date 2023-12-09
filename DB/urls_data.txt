@@ -1,2 +1,0 @@
-http://localhost/XSS/SQLI
-http://localhost/open_redirect
