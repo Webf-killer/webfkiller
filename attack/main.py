@@ -55,7 +55,7 @@ class Attack:
     def __init__(self):
         self.attackDB = self.connect_db()
         self.mycursor = self.attackDB.cursor()
-        self.urls = []  # 먼저 빈 리스트로 초기화
+        self.urls = ['http://sekurity.online:8080/vulnerabilities/xss_d/']  # 먼저 빈 리스트로 초기화
         self.proxies = {'http': 'http://localhost:8080', 'https': 'http://localhost:8080'}
         chrome_options = Options()
         chrome_options.add_experimental_option("excludeSwitches", ["enable-logging"])

@@ -1,16 +1,17 @@
 import mysql.connector
+
 # MySQL에 연결
 attackDB = mysql.connector.connect(host="localhost",user="root",password="rudtj2306!",database="attackDB")
 mycursor = attackDB.cursor()
 
 # 각 테이블 이름, 열 이름, 데이터 파일 이름을 튜플로 묶어 리스트 생성
-tables_files = [('urls', 'url', 'urls_data.txt'),  
+tables_files = [ 
                 ('payloads_ReflectedXss', 'payload', 'payloads_ReflectedXss.txt'), 
                 ('payloads_StoredXss', 'payload', 'payloads_Storedxss.txt'), 
                 ('payloads_DOMXss', 'payload', 'payloads_DomXss.txt'), 
                 ('payloads_sqli', 'payload', 'payloads_sqli.txt'), 
                 ('payloads_OpenRedirection', 'payload', 'payloads_OpenRedirection.txt'), # 수정된 부분
-                ('vulnerabilities', 'url, type, parameter, payload', 'vulnerabilities_data.txt')]
+                ]
 
 
 
