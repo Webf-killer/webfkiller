@@ -1,92 +1,135 @@
-import mysql.connector
-import requests
-from urllib.parse import quote, urlencode
-import hashlib
-import random
-import string
+import subprocess
 from bs4 import BeautifulSoup
-import execjs
 
-def generate_random_hash(length=8):
-    characters = string.ascii_letters + string.digits
-    return ''.join(random.choice(characters) for i in range(length))
-
-def send_reflected_xss_attack_from_mysql():
-    # MITM Proxy 설정
-    proxies = {
-        "http": "http://localhost:8080",
-        "https": "http://localhost:8080",
-    }
-
-    # MySQL에 연결
-    connection = mysql.connector.connect(
-        host="your_mysql_host",
-        user="your_mysql_user",
-        password="your_mysql_password",
-        database="your_mysql_database"
-    )
-
-    cursor = connection.cursor()
-
-    # 예시: 데이터베이스에서 URL, 데이터, reflectedxss 가져오기
-    cursor.execute("SELECT url, data, reflectedxss FROM Request WHERE id = 1")
-    row = cursor.fetchone()
-
-    url = row[0]
-    data = eval(row[1])  # 문자열 형태의 딕셔너리를 실제 딕셔너리로 변환
-    reflectedxss_payload = row[2]
-
-    connection.close()
-
-    # 모든 파라미터에 대해 MD5 해시값을 생성하지 않고, 랜덤 해시값을 생성하여 적용
-    for key in data:
-        data[key] = f"{key}={generate_random_hash()}_{reflectedxss_payload}_yesgood'"
-
-    try:
-        # MITM Proxy를 통해 GET 요청 패킷 전송
-        response_get = requests.get(url, headers=headers, proxies=proxies, verify=False)
-
-        # MITM Proxy를 통해 POST 요청 패킷 전송
-        response_post = requests.post(url, headers=headers, data=urlencode(data), proxies=proxies, verify=False)
-
-        # 응답 출력
-        print("GET Response:")
-        print(response_get.text)
-
-        print("\nPOST Response:")
-        print(response_post.text)
-
-        # 응답에서 자바스크립트 코드 추출
-        extract_javascript_code(response_get.text)
-        extract_javascript_code(response_post.text)
-
-    except Exception as e:
-        print(f"Error during request: {e}")
-
-def extract_javascript_code(response_text):
-    soup = BeautifulSoup(response_text, 'html.parser')
+def test_for_syntax_errors_in_script(script_text):
+    soup = BeautifulSoup(script_text, 'html.parser')
     script_tags = soup.find_all('script')
 
-    for script_tag in script_tags:
-        javascript_code = script_tag.string
-        if javascript_code:
-            detect_reflected_xss(javascript_code)
+    for script in script_tags:
+        script_code = script.get_text()
+        if script_code.strip():
+            try:
+                # Node.js를 사용하여 스크립트 코드를 실행
+                process = subprocess.run(['node', '-e', script_code], check=True, capture_output=True, text=True)
+            except subprocess.CalledProcessError as e:
+                # Node.js 실행 중 에러 발생 (구문 오류 포함)
+                print(f"Error detected in script: {script_code}")
+                print(e.output)
+                return True
+    return False
 
-    # 이벤트 핸들러 안에 있는 자바스크립트 코드 추출
-    event_handlers = soup.find_all(attrs={'on*': True})
-    for event_handler in event_handlers:
-        javascript_code = event_handler.get(event_handler.attrs['on*'])
-        if javascript_code:
-            detect_reflected_xss(javascript_code)
+# 사용 예시
+script_text = """
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-def detect_reflected_xss(javascript_code):
-    try:
-        # SyntaxError가 발생하면 Reflected XSS로 간주
-        execjs.compile(javascript_code)
-    except execjs.RuntimeError as e:
-        print(f"Reflected XSS detected! Error message: {e}")
-        print("Javascript Code:")
-        print(javascript_code)
+<html xmlns="http://www.w3.org/1999/xhtml">
 
-# 함수 호출
-send_reflected_xss_attack_from_mysql()
+        <head>
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+                <title>Vulnerability: Reflected Cross Site Scripting (XSS) :: Damn Vulnerable Web Application (DVWA) v1.10 *Development*</title>
+
+                <link rel="stylesheet" type="text/css" href="../../dvwa/css/main.css" />
+
+                <link rel="icon" type="\image/ico" href="../../favicon.ico" />
+
+                <script type="text/javascript" src="../../dvwa/js/dvwaPage.js"></script>
+
+        </head>
+
+        <body class="home">
+                <div id="container">
+
+                        <div id="header">
+
+                                <img src="../../dvwa/images/logo.png" alt="Damn Vulnerable Web Application" />
+
+                        </div>
+
+                        <div id="main_menu">
+
+                                <div id="main_menu_padded">
+                                <ul class="menuBlocks"><li class=""><a href="../../.">Home</a></li>
+<li class=""><a href="../../instructions.php">Instructions</a></li>
+<li class=""><a href="../../setup.php">Setup / Reset DB</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../vulnerabilities/brute/">Brute Force</a></li>
+<li class=""><a href="../../vulnerabilities/exec/">Command Injection</a></li>
+<li class=""><a href="../../vulnerabilities/csrf/">CSRF</a></li>
+<li class=""><a href="../../vulnerabilities/fi/.?page=include.php">File Inclusion</a></li>
+<li class=""><a href="../../vulnerabilities/upload/">File Upload</a></li>
+<li class=""><a href="../../vulnerabilities/captcha/">Insecure CAPTCHA</a></li>
+<li class=""><a href="../../vulnerabilities/sqli/">SQL Injection</a></li>
+<li class=""><a href="../../vulnerabilities/sqli_blind/">SQL Injection (Blind)</a></li>
+<li class=""><a href="../../vulnerabilities/weak_id/">Weak Session IDs</a></li>
+<li class=""><a href="../../vulnerabilities/xss_d/">XSS (DOM)</a></li>
+<li class="selected"><a href="../../vulnerabilities/xss_r/">XSS (Reflected)</a></li>
+<li class=""><a href="../../vulnerabilities/xss_s/">XSS (Stored)</a></li>
+<li class=""><a href="../../vulnerabilities/csp/">CSP Bypass</a></li>
+<li class=""><a href="../../vulnerabilities/javascript/">JavaScript</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../security.php">DVWA Security</a></li>
+<li class=""><a href="../../phpinfo.php">PHP Info</a></li>
+<li class=""><a href="../../about.php">About</a></li>
+</ul><ul class="menuBlocks"><li class=""><a href="../../logout.php">Logout</a></li>
+</ul>
+                                </div>
+
+                        </div>
+
+                        <div id="main_body">
+
+
+<div class="body_padded">
+        <h1>Vulnerability: Reflected Cross Site Scripting (XSS)</h1>
+
+        <div class="vulnerable_code_area">
+                <form name="XSS" action="#" method="GET">
+                        <p>
+                                What's your name?
+                                <input type="text" name="name">
+                                <input type="submit" value="Submit">
+                        </p>
+
+                </form>
+                <pre>Hello <script>var a = "AAAAAAAA'"";</script></pre>
+        </div>
+
+        <h2>More Information</h2>
+        <ul>
+                <li><a href="https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)" target="_blank">https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)</a></li>
+                <li><a href="https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet" target="_blank">https://www.owasp.org/index.php/XSS_Filter_Evasion_Cheat_Sheet</a></li>
+                <li><a href="https://en.wikipedia.org/wiki/Cross-site_scripting" target="_blank">https://en.wikipedia.org/wiki/Cross-site_scripting</a></li>
+                <li><a href="http://www.cgisecurity.com/xss-faq.html" target="_blank">http://www.cgisecurity.com/xss-faq.html</a></li>
+                <li><a href="http://www.scriptalert1.com/" target="_blank">http://www.scriptalert1.com/</a></li>
+        </ul>
+</div>
+
+                                <br /><br />
+
+
+                        </div>
+
+                        <div class="clear">
+                        </div>
+
+                        <div id="system_info">
+                                <input type="button" value="View Help" class="popup_button" id='help_button' data-help-url='../../vulnerabilities/view_help.php?id=xss_r&security=low' )"> <input type="button" value="View Source" class="popup_button" id='source_button' data-source-url='../../vulnerabilities/view_source.php?id=xss_r&security=low' )"> <div align="left"><em>Username:</em> admin<br /><em>Security Level:</em> low<br /><em>PHPIDS:</em> disabled</div>
+                        </div>
+
+                        <div id="footer">
+
+                                <p>Damn Vulnerable Web Application (DVWA) v1.10 *Development*</p>
+                                <script src='/dvwa/js/add_event_listeners.js'></script>
+
+                        </div>
+
+                </div>
+
+        </body>
+
+</html>
+"""
+
+if test_for_syntax_errors_in_script(script_text):
+    print("SyntaxError detected in the provided script text.")
+else:
+    print("No SyntaxError detected in the script text.")
