@@ -41,7 +41,7 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 1. USER_INPUT.py에서 DB연결정보 입력하기(mysql_id,mysql_pw,mysql_host,mysql_port)
 2. PROXY_mitmproxy.py 파일 실행
 3. 이후 웹 브라우저를 돌아다니면 자동 탐지
-   3.1 웹 브라우저 자동 탐지하며 command창 확인
+3.1 웹 브라우저 자동 탐지하며 command창 확인
 4. Result폴더의 make_json.py파일 실행
 5. 4번 실행 후 최상위url(125.130.152.101:8880).json 파일확인
 =======
