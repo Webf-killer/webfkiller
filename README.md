@@ -5,16 +5,18 @@
 - 김서율, 강경서, 구가경, 김수민, 김민지, 강혜인, 김우종
 
 ## 🎯 기능
-1. **Proxy_mitmproxy.py** : 프록시 서버를 통해 웹 페이지의 요청 및 응답 내용을 수집
-2. **Scanner.py** : SQLi, Stored XSS, Reflected XSS, Dom-based XSS 취약점을 탐지
-3. **Composer_packet_generator.py** : 페이로드를 이용한 패킷을 생성하고 요청 보냄
-4. **DB_util.py** : 결과를 MySQL 데이터베이스에 저장
-5. **Payloads.txt** : 취약점 탐지를 위한 다양한 페이로드들.
+1.**Crawler:크롤링을 통해 url을 수집
+2. **Proxy : 프록시 서버를 통해 웹 페이지의 요청 및 응답 내용을 수집
+3. **Scanner: SQLi, Stored XSS, Reflected XSS, Dom-based XSS 취약점을 탐지
+4. **Composer : 페이로드를 이용한 패킷을 생성하고 요청 보냄
+5. **DB : 결과를 MySQL 데이터베이스에 저장
+6. **Payload : 취약점 탐지를 위한 다양한 페이로드들.
 
 ## ⭐설치 요구사항
 - 필요한 파이썬 패키지 설치
+  (requirements.txt파일에 필요한 패키지 이름 저장되어있음. 이 파일을 설치)
 ```python
-pip install selenium requests pymysql mitmproxy webdriver_manager psutil keyboard beautifulsoup4 binascii
+pip install -r requirements.txt
 ```
 - 인증서 추가하기
 #### 인증서 추가 방법 WIN
@@ -31,41 +33,20 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 3. command + space누르고 키체인 검색
 4. mitmproxy 인증서 더블클릭 후 상단의 신뢰 클릭
 5. 이 인증서 사용시: 시스템초기설정사용 -> 항상신뢰 로 변경
-- node, mysql 설치
+
+#### node, mysql 설치
 
 <<<<<<< HEAD
 ## 💻사용 방법
-1. DB_util.py에서 MYSQL의 id, pw 변경
-2. PROXY_mitmproxy_script.py에서 탐색할 URL 화이트리스트에 입력
-3. PROXY_mitmproxy.py 파일 실행
-4. 이후 웹 브라우저를 돌아다니면 자동 탐지
+1. USER_INPUT.py에서 DB연결정보 입력하기(mysql_id,mysql_pw,mysql_host,mysql_port)
+2. PROXY_mitmproxy.py 파일 실행
+3. 이후 웹 브라우저를 돌아다니면 자동 탐지
+   3.1 웹 브라우저 자동 탐지하며 command창 확인
+4. Result폴더의 make_json.py파일 실행
+5. 4번 실행 후 최상위url(125.130.152.101:8880).json 파일확인
 =======
-3. parameter 처리. 동일한 파라미터에 대한 여러 content_length 값을 row로 모아서 len_array에 전달. 파라미터가 다른 경우에는 이전 파라미터를 처리하고 새로운 파라미터 row를 시작함.
-
-4. 최종적으로 하나의 url에 대한 파라미터값, content-Length로 구성된 이중리스트 형태의 len_array 생성
-   ![image](https://github.com/Webf-killer/webfkiller/assets/80975083/6aadba02-0ee8-4a14-8e26-55c60d69918a)
 
 
-#### check_len : 파싱된 데이터로부터 취약점을 판별하는 함수
-1. url, len_array를 입력으로 받음
 
-2. 배열의 각 요소(row)에 대해 첫번째 요소는 파라미터 이름, 나머지 요소는 값이 모두 같은지 확인
 
-3. 값이 다른 요소가 하나만 있을 경우, 해당 row는 취약한 것으로 간주하고, DB_Control 모듈로 url, 파라미터 이름, True, 인덱스 번호 정보를 전송
-
-## ⛳ 각 과정 별 input, output
-#### 1. 패킷 생성하기
-a. input : 프록시 url, 파라미터 이름, payloads_sqli.txt
-
-b. output : 새로운 패킷
-
-#### 2. 컴포저 불러오기
-a. input : 새로운 패킷
-
-b. output : 컴포저 응답의 url, 파라미터, 파라미터 갯수, 페이로드, Header의 Content-Lenght
-
-#### 3. 취약점 탐지
-a. input : 컴포저 응답의 url, 파라미터, 파라미터 갯수, 페이로드, Header의 Content-Length
-
-b. output : 취약점 타입, url, 파라미터, 페이로드 => DB에 저장
 >>>>>>> 0123cc6 (Update README.md)
