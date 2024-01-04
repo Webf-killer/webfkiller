@@ -50,6 +50,6 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 =======
 
 
-
+ㄹ
 
 >>>>>>> 0123cc6 (Update README.md)
