@@ -34,7 +34,9 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 4. mitmproxy 인증서 더블클릭 후 상단의 신뢰 클릭
 5. 이 인증서 사용시: 시스템초기설정사용 -> 항상신뢰 로 변경
 
-#### node, mysql 설치
+#### node.js 설치
+
+#### mysql 설치
 
 
 ## 💻사용 방법
