@@ -36,14 +36,15 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 
 #### node, mysql 설치
 
-<<<<<<< HEAD
+
 ## 💻사용 방법
-1. USER_INPUT.py에서 DB연결정보 입력하기(mysql_id,mysql_pw,mysql_host,mysql_port)
-2. PROXY_mitmproxy.py 파일 실행
-3. 이후 웹 브라우저를 돌아다니면 자동 탐지
-3.1 웹 브라우저 자동 탐지하며 command창 확인
-4. Result폴더의 make_json.py파일 실행
-5. 4번 실행 후 최상위url(125.130.152.101:8880).json 파일확인
+1. **USER_INPUT.py**에서 DB연결정보 입력하기(mysql_id,mysql_pw,mysql_host,mysql_port),
+   탐지url(최상위 url)입력하기
+2. **PROXY_mitmproxy.py** 파일 실행
+3. 2번실행 후 열리는 셀레니움 창 돌아다니면서 자동 탐지<br/>
+3.1. 셀레니움 창 자동 탐지하며 command창 확인
+5. **Result폴더**의 **make_json.py**파일 실행
+6. 4번 실행 후 **최상위url.json** 파일확인
 =======
 
 
