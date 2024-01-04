@@ -5,12 +5,12 @@
 - 김서율, 강경서, 구가경, 김수민, 김민지, 강혜인, 김우종
 
 ## 🎯 기능
-1. **Crawler:크롤링을 통해 url을 수집
-2. **Proxy : 프록시 서버를 통해 웹 페이지의 요청 및 응답 내용을 수집
-3. **Scanner: SQLi, Stored XSS, Reflected XSS, Dom-based XSS 취약점을 탐지
-4. **Composer : 페이로드를 이용한 패킷을 생성하고 요청 보냄
-5. **DB : 결과를 MySQL 데이터베이스에 저장
-6. **Payload : 취약점 탐지를 위한 다양한 페이로드들.
+1. **Crawler**:크롤링을 통해 url을 수집
+2. **Proxy**: 프록시 서버를 통해 웹 페이지의 요청 및 응답 내용을 수집
+3. **Scanner**: SQLi, Stored XSS, Reflected XSS, Dom-based XSS 취약점을 탐지
+4. **Composer** : 페이로드를 이용한 패킷을 생성하고 요청 보냄
+5. **DB** : 결과를 MySQL 데이터베이스에 저장
+6. **Payload** : 취약점 탐지를 위한 다양한 페이로드들.
 
 ## ⭐설치 요구사항
 - 필요한 파이썬 패키지 설치
