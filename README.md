@@ -18,6 +18,8 @@
 ```python
 pip install -r requirements.txt
 ```
+- Node.js 설치
+- Mysql 설치
 - 인증서 추가하기
 #### 인증서 추가 방법 WIN
 1. %USERPROFILE%\.mitmproxy\mitmproxy-ca-cert.cer 실행 (안나오면 프록시랑 스크립트 실행시켜보고 재부팅)
@@ -34,22 +36,14 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 4. mitmproxy 인증서 더블클릭 후 상단의 신뢰 클릭
 5. 이 인증서 사용시: 시스템초기설정사용 -> 항상신뢰 로 변경
 
-#### node.js 설치
-
-#### mysql 설치
 
 
 ## 💻사용 방법
-1. **USER_INPUT.py**에서 DB연결정보 입력하기(mysql_id,mysql_pw,mysql_host,mysql_port),
-   탐지url(최상위 url)입력하기
-2. **PROXY_mitmproxy.py** 파일 실행
-3. 2번실행 후 열리는 셀레니움 창 돌아다니면서 자동 탐지<br/>
-3.1. 셀레니움 창 자동 탐지하며 command창 확인
+1. 크롤러를 이용하여 하위 url 수집
+2. **USER_INPUT.py**에서 DB연결정보,탐지url(최상위 url) 입력하기
+3. **PROXY_mitmproxy.py** 파일 실행
+4. 2번실행 후 열리는 셀레니움 창 이용하여 하위 url접속<br/>
+4.1. command창 확인
 5. **Result폴더**의 **make_json.py**파일 실행
 6. 4번 실행 후 **최상위url.json** 파일확인
 =======
-
-
-ㄹ
-
->>>>>>> 0123cc6 (Update README.md)
