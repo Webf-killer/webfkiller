@@ -42,8 +42,8 @@ sudo security add-trusted-cert -d -r trustRoot -p ssl -k /Library/Keychains/Syst
 1. 크롤러를 이용하여 하위 url 수집
 2. **USER_INPUT.py**에서 DB연결정보,탐지url(최상위 url) 입력하기
 3. **PROXY_mitmproxy.py** 파일 실행
-4. 2번실행 후 열리는 셀레니움 창 이용하여 하위 url접속<br/>
+4. 3번실행 후 열리는 셀레니움 창 이용하여 하위 url접속<br/>
 4.1. command창 확인
 5. **Result폴더**의 **make_json.py**파일 실행
-6. 4번 실행 후 **최상위url.json** 파일확인
+6. 5번 실행 후 **최상위url.json** 파일확인
 =======
