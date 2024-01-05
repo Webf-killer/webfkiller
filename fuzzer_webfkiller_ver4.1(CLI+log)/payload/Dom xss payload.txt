@@ -1,3 +1,0 @@
-" someattr=1 dummy="
-' someattr=1 dummy='
-someattr=1
