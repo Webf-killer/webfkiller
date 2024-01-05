@@ -1,0 +1,380 @@
+[{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_859219b5_\"' and 1=1 --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_859219b5_\"' and 1=1 --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_859219b5_\"' and 1=1 --&Submit=Submit"
+},
+{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_0a89b0b4_'\" and 1=1 --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_0a89b0b4_'\" and 1=1 --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_0a89b0b4_'\" and 1=1 --&Submit=Submit"
+},
+{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_11659d73_1' and sleep(5) --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_11659d73_1' and sleep(5) --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_11659d73_1' and sleep(5) --&Submit=Submit"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_4a193416_<script>var a = \"(webf)\"';</script>"
+    },
+    "payload": "webfkiller_4a193416_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_4a193416_<script>var a = \"(webf)\"';</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_19c998f3_<script>var b = '(webf)'\";</script>"
+    },
+    "payload": "webfkiller_19c998f3_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_19c998f3_<script>var b = '(webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_825a149f_<script>var c = (webf)'\";</script>"
+    },
+    "payload": "webfkiller_825a149f_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_825a149f_<script>var c = (webf)'\";</script>"
+},
+{
+    "type": "DOM XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_6278c875_' someattr=1 dummy='"
+    },
+    "payload": "webfkiller_6278c875_' someattr=1 dummy='",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_6278c875_' someattr=1 dummy='"
+},
+{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_0be1036e_\"' and 1=1 --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_0be1036e_\"' and 1=1 --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_0be1036e_\"' and 1=1 --&Submit=Submit"
+},
+{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_a3c99286_'\" and 1=1 --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_a3c99286_'\" and 1=1 --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_a3c99286_'\" and 1=1 --&Submit=Submit"
+},
+{
+    "type": "SQLi",
+    "url": "http://125.130.152.101:8880/vulnerabilities/sqli/",
+    "parms": {
+        "id": "webfkiller_14b138e7_1' and sleep(5) --",
+        "Submit": "Submit"
+    },
+    "payload": "webfkiller_14b138e7_1' and sleep(5) --",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/sqli/?id=webfkiller_14b138e7_1' and sleep(5) --&Submit=Submit"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_81a128cf_<script>var a = \"(webf)\"';</script>"
+    },
+    "payload": "webfkiller_81a128cf_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_81a128cf_<script>var a = \"(webf)\"';</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_1b51cde3_<script>var b = '(webf)'\";</script>"
+    },
+    "payload": "webfkiller_1b51cde3_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_1b51cde3_<script>var b = '(webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_73c64716_<script>var c = (webf)'\";</script>"
+    },
+    "payload": "webfkiller_73c64716_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_73c64716_<script>var c = (webf)'\";</script>"
+},
+{
+    "type": "DOM XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_d/",
+    "parms": {
+        "default": "webfkiller_96220bd2_' someattr=1 dummy='"
+    },
+    "payload": "webfkiller_96220bd2_' someattr=1 dummy='",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_d/?default=webfkiller_96220bd2_' someattr=1 dummy='"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_r/",
+    "parms": {
+        "name": "webfkiller_baf045c3_<script>var a = \"(webf)\"';</script>"
+    },
+    "payload": "webfkiller_baf045c3_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_r/?name=webfkiller_baf045c3_<script>var a = \"(webf)\"';</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_r/",
+    "parms": {
+        "name": "webfkiller_0bb01bfd_<script>var b = '(webf)'\";</script>"
+    },
+    "payload": "webfkiller_0bb01bfd_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_r/?name=webfkiller_0bb01bfd_<script>var b = '(webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_r/",
+    "parms": {
+        "name": "webfkiller_a983befb_<script>var c = (webf)'\";</script>"
+    },
+    "payload": "webfkiller_a983befb_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_r/?name=webfkiller_a983befb_<script>var c = (webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_8abee122_<script>var a = \"(webf)\"';</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_8abee122_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_8abee122_<script>var a = \"(webf)\"';</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_d08396cb_<script>var c = (webf)'\";</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_d08396cb_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_d08396cb_<script>var c = (webf)'\";</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_2dda48df_<script>var b = '(webf)'\";</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_2dda48df_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_2dda48df_<script>var b = '(webf)'\";</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_b7ba184d_<script>var a = \"(webf)\"';</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_b7ba184d_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_b7ba184d_<script>var a = \"(webf)\"';</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_0b6c8245_<script>var b = '(webf)'\";</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_0b6c8245_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_0b6c8245_<script>var b = '(webf)'\";</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_5c0fe478_<script>var a = \"(webf)\"';</script>"
+    },
+    "payload": "webfkiller_5c0fe478_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_5c0fe478_<script>var a = \"(webf)\"';</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_46ee9dd2_<script>var c = (webf)'\";</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_46ee9dd2_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_46ee9dd2_<script>var c = (webf)'\";</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_dffb53a5_<script>var b = '(webf)'\";</script>"
+    },
+    "payload": "webfkiller_dffb53a5_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_dffb53a5_<script>var b = '(webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_4fb0bd8d_<script>var c = (webf)'\";</script>"
+    },
+    "payload": "webfkiller_4fb0bd8d_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_4fb0bd8d_<script>var c = (webf)'\";</script>"
+},
+{
+    "type": "Stored XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_fb3d083e_<script>var a = \"(webf)\"';</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_fb3d083e_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_fb3d083e_<script>var a = \"(webf)\"';</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_33922777_<script>var a = \"(webf)\"';</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_33922777_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_33922777_<script>var a = \"(webf)\"';</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_4d878efd_<script>var c = (webf)'\";</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_4d878efd_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_4d878efd_<script>var c = (webf)'\";</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_999974fb_<script>var b = '(webf)'\";</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_999974fb_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_999974fb_<script>var b = '(webf)'\";</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_cfdd9a2f_<script>var a = \"(webf)\"';</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_cfdd9a2f_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_cfdd9a2f_<script>var a = \"(webf)\"';</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_43be1f6e_<script>var b = '(webf)'\";</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_43be1f6e_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_43be1f6e_<script>var b = '(webf)'\";</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "webfkiller_b53a90be_<script>var c = (webf)'\";</script>",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_b53a90be_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=webfkiller_b53a90be_<script>var c = (webf)'\";</script>&btnSign=Sign Guestbook"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_f3d0adb3_<script>var a = \"(webf)\"';</script>"
+    },
+    "payload": "webfkiller_f3d0adb3_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_f3d0adb3_<script>var a = \"(webf)\"';</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_b5431ad1_<script>var c = (webf)'\";</script>"
+    },
+    "payload": "webfkiller_b5431ad1_<script>var c = (webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_b5431ad1_<script>var c = (webf)'\";</script>"
+},
+{
+    "type": "Reflected XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "aaa",
+        "mtxMessage": "bbb",
+        "btnSign": "webfkiller_73c1b1bc_<script>var b = '(webf)'\";</script>"
+    },
+    "payload": "webfkiller_73c1b1bc_<script>var b = '(webf)'\";</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=aaa&mtxMessage=bbb&btnSign=webfkiller_73c1b1bc_<script>var b = '(webf)'\";</script>"
+},
+{
+    "type": "Stored XSS",
+    "url": "http://125.130.152.101:8880/vulnerabilities/xss_s/",
+    "parms": {
+        "txtName": "webfkiller_04a8dec0_<script>var a = \"(webf)\"';</script>",
+        "mtxMessage": "bbb",
+        "btnSign": "Sign Guestbook"
+    },
+    "payload": "webfkiller_04a8dec0_<script>var a = \"(webf)\"';</script>",
+    "use_url": "http://125.130.152.101:8880/vulnerabilities/xss_s/?txtName=webfkiller_04a8dec0_<script>var a = \"(webf)\"';</script>&mtxMessage=bbb&btnSign=Sign Guestbook"
+}
+]

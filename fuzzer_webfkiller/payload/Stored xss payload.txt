@@ -1,0 +1,4 @@
+<script>var a = "(webf)"';</script>
+<script>var b = '(webf)'";</script>
+<script>var c = (webf)'";</script>
+(webf) ' "
